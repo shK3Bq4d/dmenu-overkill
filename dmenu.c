@@ -80,6 +80,7 @@ static Bool running = True;
 static Bool filter = False;
 static Bool maskin = False;
 static Bool noinput = False;
+static Bool vertfull = False;
 static int ret = 0;
 static Bool quiet = False;
 static DC *dc;
@@ -124,13 +125,14 @@ main(int argc, char *argv[]) {
 			fstrstr = cistrstr;
 			fstrchr = strchri;
 		}
-      else if(!strcmp(argv[i], "-mask")) /* password-style input */
-         maskin = True;
-      else if(!strcmp(argv[i], "-noinput"))
-         noinput = True;
-
+		else if(!strcmp(argv[i], "-mask")) /* password-style input */
+			maskin = True;
+		else if(!strcmp(argv[i], "-noinput"))
+			noinput = True;
 		else if(!strcmp(argv[i], "-t"))
 			match = matchtok;
+		else if(!strcmp(argv[i], "-vf")) /* vertfull patch */
+			vertfull = True;
 		else if(i+1 == argc)
 			usage();
 		/* these options take one argument */
@@ -338,6 +340,8 @@ drawmenu(void) {
     if(!quiet || strlen(text) > 0) {    
         if(lines > 0) {
             /* draw vertical list */
+			if(vertfull)
+				dc->x = 0;
             dc->w = mw - dc->x;
             for(item = curr; item != next; item = item->right) {
                 dc->y += dc->h;

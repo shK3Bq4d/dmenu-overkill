@@ -1004,17 +1004,9 @@ setup(void) {
 	/* calculate menu geometry */
 	lines = MAX(lines, 0);
 	menu_height = MAX(menu_height, 0);
-	if(menu_height > 0) {
-		if(lines > 0 && line_height == 0)
-			line_height = menu_height / (lines + 1);
-		else if(lines == 0 && line_height > 0)
-			lines = (menu_height / line_height) - 1;
-		else if(lines == 0 && line_height == 0)
-			lines = (menu_height / (dc->font.height + 2)) - 1;
-		else
-			eprintf("-mh, -h, and -l cannot all be set at once.\n");
-	}
 	bh = (line_height > dc->font.height + 2) ? line_height : dc->font.height + 2;
+	if(menu_height > 0)
+		lines = (menu_height / bh) - 1;
 	mh = (lines + 1) * bh;
 #ifdef XINERAMA
 	if((info = XineramaQueryScreens(dc->dpy, &n))) {

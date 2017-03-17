@@ -119,7 +119,7 @@ dmenu lists items vertically, with the given number of lines.
 defines the height of the bar in pixels.
 .TP
 .BI \-mh " menuheight"
-defines the total height of the menu. If set, it can adapt to values set with -l or -h, but will result in an error if both are set.
+defines the total height of the menu. If set, it can use the lineheight defined with -h, but it resets the number of lines, rendering -l useless.
 .TP
 .BI \-p " prompt"
 defines the prompt to be displayed to the left of the input field.

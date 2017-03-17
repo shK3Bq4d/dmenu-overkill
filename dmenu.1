@@ -11,6 +11,7 @@ dmenu \- dynamic menu
 .RB [ \-t ]
 .RB [ \-mask ]
 .RB [ \-noinput ]
+.RB [ \-vf ]
 .RB [ \-s
 .IR screen ]
 .RB [ \-name
@@ -89,6 +90,9 @@ dmenu masks input with asterisk characters (*).
 .TP
 .B \-noinput
 dmenu ignores input from stdin (equivalent to: echo | dmenu).
+.TP
+.B \-vf
+dmenu choices appear directly under the prompt, instead of tabbed right.
 .TP
 .BI \-s " screen"
 dmenu apears on the specified screen number. Number given corespondes to screen number in X configuration.

@@ -1121,7 +1121,8 @@ setup(void) {
 
 void
 usage(void) {
-	fputs("usage:\ndmenu [-b] [-q] [-f] [-r] [-i] [-z] [-t] [-mask] [-noinput]\n"
+	fputs("usage:\n"
+		"dmenu [-b] [-q] [-f] [-r] [-i] [-z] [-t] [-mask] [-noinput] [-vf]\n"
 		"      [-s screen] [-name name] [-class class] [ -o opacity]\n"
 		"      [-dim opcity] [-dc color] [-l lines] [-p prompt] [-fn font]\n"
 		"      [-x xoffset] [-y yoffset] [-h height] [-w width]\n"

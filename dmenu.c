@@ -872,7 +872,7 @@ matchfuzzy(void) {
 	size_t len;
 	Item *item;
 	char *pos;
-	
+
 	len = strlen(text);
 	matches = matchend = NULL;
 	for(item = items; item && item->text; item++) {
@@ -1013,7 +1013,7 @@ setup(void) {
 			x = info[snum].x_org;
 			y = info[snum].y_org + (topbar ? yoffset : info[i].height - mh - yoffset);
 			mw = info[snum].width;
-			
+
 			dimx = info[snum].x_org;
 			dimy = info[snum].y_org;
 			dimw = info[snum].width;
@@ -1058,7 +1058,7 @@ setup(void) {
 		x = 0;
 		y = topbar ? 0 : DisplayHeight(dc->dpy, screen) - mh - yoffset;
 		mw = DisplayWidth(dc->dpy, screen);
-		
+
 		dimx = 0;
 		dimy = 0;
 		dimw = WidthOfScreen(defScreen); 
@@ -1070,9 +1070,9 @@ setup(void) {
 	promptw = (prompt && *prompt) ? textw(dc, prompt) : 0;
 	inputw = MIN(inputw, mw/3);
 	match();
-	
+
 	swa.override_redirect = True;
-	
+
 	/* create dim window */
 	if(dimopacity > 0) {
 		swa.background_pixel = dimcol->BG;
@@ -1089,10 +1089,10 @@ setup(void) {
 	XChangeProperty(dc->dpy, dim, XInternAtom(dc->dpy, OPACITY, False),
 											XA_CARDINAL, 32, PropModeReplace,
 											(unsigned char *) &dimopacity_set, 1L);
-	
+
 		XMapRaised(dc->dpy, dim);
 	}
-	
+
 	/* create menu window */
 	swa.background_pixel = normcol->BG;
 	swa.event_mask = ExposureMask | KeyPressMask | VisibilityChangeMask | ButtonPressMask | PointerMotionMask;
@@ -1108,7 +1108,7 @@ setup(void) {
 	XChangeProperty(dc->dpy, win, XInternAtom(dc->dpy, OPACITY, False),
 											XA_CARDINAL, 32, PropModeReplace,
 											(unsigned char *) &opacity_set, 1L);
-	
+
 	/* open input methods */
 	xim = XOpenIM(dc->dpy, NULL, NULL, NULL);
 	xic = XCreateIC(xim, XNInputStyle, XIMPreeditNothing | XIMStatusNothing,

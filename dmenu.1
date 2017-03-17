@@ -34,6 +34,8 @@ dmenu \- dynamic menu
 .IR width ]
 .RB [ \-p
 .IR prompt ]
+.RB [ \-so
+.IR scrolloff ]
 .RB [ \-fn
 .IR font ]
 .RB [ \-nb
@@ -125,6 +127,9 @@ defines the total height of the menu. If set, it can use the lineheight defined 
 .TP
 .BI \-p " prompt"
 defines the prompt to be displayed to the left of the input field.
+.TP
+.BI \-so " scrolloff"
+defines how far each click of the scroll wheel will scroll. Defaults to 4 because I like it that way. Set to 0 for dmenu default behavior (page down/up results).
 .TP
 .BI \-fn " font"
 defines the font or font set used. eg. "fixed" or "Monospace-12:normal" (an xft font)

@@ -69,6 +69,7 @@ static unsigned int menu_height = 0;
 static int xoffset = 0;
 static int yoffset = 0;
 static int width = 0;
+static int scrolloff = 4; /* default value that I like */
 #ifdef XINERAMA
 static int snum = -1;
 #endif
@@ -165,6 +166,8 @@ main(int argc, char *argv[]) {
 			dimcolor = argv[++i];
 		else if(!strcmp(argv[i], "-p"))   /* adds prompt to left of input field */
 			prompt = argv[++i];
+		else if(!strcmp(argv[i], "-so")) /* set the scrolloff value */
+			scrolloff = atoi(argv[++i]);
 		else if(!strcmp(argv[i], "-fn"))  /* font or font set */
 			font = argv[++i];
 		else if(!strcmp(argv[i], "-nb"))  /* normal background color */
@@ -730,14 +733,28 @@ buttonpress(XEvent *e) {
 	}
 	/* scroll up */
 	if(ev->button == Button4 && prev) {
-		sel = curr = prev;
+		if (scrolloff) {
+			int i = 0;
+			while(++i < scrolloff && sel && sel->left && curr && curr->left) {
+				curr = curr->left;
+				sel = sel->left;
+			}
+		} else
+			sel = curr = prev;
 		calcoffsets();
 		drawmenu();
 		return;
 	}
 	/* scroll down */
 	if(ev->button == Button5 && next) {
-		sel = curr = next;
+		if (scrolloff) {
+			int i = 0;
+			while(++i < scrolloff && sel && sel->right && curr && curr->right) {
+				curr = curr->right;
+				sel = sel->right;
+			}
+		} else
+			sel = curr = next;
 		calcoffsets();
 		drawmenu();
 		return;
@@ -1129,7 +1146,7 @@ void
 usage(void) {
 	fputs("usage:\n"
 		"dmenu [-b] [-q] [-f] [-r] [-i] [-z] [-t] [-mask] [-noinput] [-vf]\n"
-		"      [-s screen] [-name name] [-class class] [ -o opacity]\n"
+		"      [-s screen] [-name name] [-class class] [ -o opacity] [-so scrolloff]\n"
 		"      [-dim opacity] [-dc color] [-l lines] [-p prompt] [-fn font]\n"
 		"      [-x xoffset] [-y yoffset] [-h height] [-w width] [-mh menuheight]\n"
 		"      [-nb color] [-nf color] [-sb color] [-sf color] [-v]\n", stderr);

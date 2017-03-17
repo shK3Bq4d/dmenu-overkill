@@ -14,10 +14,10 @@
 #endif
 #include "draw.h"
 
-#define INTERSECT(x,y,w,h,r)  (MAX(0, MIN((x)+(w),(r).x_org+(r).width)  - MAX((x),(r).x_org)) \
-                             * MAX(0, MIN((y)+(h),(r).y_org+(r).height) - MAX((y),(r).y_org)))
-#define MIN(a,b)              ((a) < (b) ? (a) : (b))
-#define MAX(a,b)              ((a) > (b) ? (a) : (b))
+#define INTERSECT(x,y,w,h,r) (MAX(0, MIN((x)+(w),(r).x_org+(r).width)	- MAX((x),(r).x_org)) \
+							* MAX(0, MIN((y)+(h),(r).y_org+(r).height) - MAX((y),(r).y_org)))
+#define MIN(a,b)             ((a) < (b) ? (a) : (b))
+#define MAX(a,b)             ((a) > (b) ? (a) : (b))
 #define DEFFONT "fixed" /* xft example: "Monospace-11" */
 
 typedef struct Item Item;
@@ -106,20 +106,20 @@ main(int argc, char *argv[]) {
 
 	for(i = 1; i < argc; i++)
 		/* these options take no arguments */
-		if(!strcmp(argv[i], "-v")) {      /* prints version information */
+		if(!strcmp(argv[i], "-v")) { /* prints version information */
 			puts("dmenu-"VERSION", © 2006-2012 dmenu engineers, see LICENSE for details");
 			exit(EXIT_SUCCESS);
 		}
 		else if(!strcmp(argv[i], "-b"))   /* appears at the bottom of the screen */
 			topbar = False;
- 		else if(!strcmp(argv[i], "-q"))
- 			quiet = True;
+		else if(!strcmp(argv[i], "-q"))
+			quiet = True;
 		else if(!strcmp(argv[i], "-f"))   /* grabs keyboard before reading stdin */
 			fast = True;
 		else if(!strcmp(argv[i], "-z"))   /* enable fuzzy matching */
 			match = matchfuzzy;
- 		else if(!strcmp(argv[i], "-r"))
- 			filter = True;
+		else if(!strcmp(argv[i], "-r"))
+			filter = True;
 		else if(!strcmp(argv[i], "-i")) { /* case-insensitive item matching */
 			fstrncmp = strncasecmp;
 			fstrstr = cistrstr;
@@ -136,12 +136,12 @@ main(int argc, char *argv[]) {
 		else if(i+1 == argc)
 			usage();
 		/* these options take one argument */
- 		else if(!strcmp(argv[i], "-x"))
- 			xoffset = atoi(argv[++i]);
- 		else if(!strcmp(argv[i], "-y"))
- 			yoffset = atoi(argv[++i]);
- 		else if(!strcmp(argv[i], "-w"))
- 			width = atoi(argv[++i]);
+		else if(!strcmp(argv[i], "-x"))
+			xoffset = atoi(argv[++i]);
+		else if(!strcmp(argv[i], "-y"))
+			yoffset = atoi(argv[++i]);
+		else if(!strcmp(argv[i], "-w"))
+			width = atoi(argv[++i]);
 		else if(!strcmp(argv[i], "-l"))   /* number of lines in vertical list */
 			lines = atoi(argv[++i]);
 		else if(!strcmp(argv[i], "-h"))   /* minimum height of single line */
@@ -156,7 +156,7 @@ main(int argc, char *argv[]) {
 			class = argv[++i];
 		else if (!strcmp(argv[i], "-o"))  /* opacity */
 			opacity = atof(argv[++i]);
-		else if (!strcmp(argv[i], "-dim"))  /* dim opacity */
+		else if (!strcmp(argv[i], "-dim"))	/* dim opacity */
 			dimopacity = atof(argv[++i]);	
 		else if (!strcmp(argv[i], "-dc")) /* dim color */
 			dimcolor = argv[++i];
@@ -176,26 +176,26 @@ main(int argc, char *argv[]) {
 			usage();
 
 	dc = initdc();
- 	read_resourses();
+	read_resourses();
 	initfont(dc, font ? font : DEFFONT);
 	normcol = initcolor(dc, normfgcolor, normbgcolor);
 	selcol = initcolor(dc, selfgcolor, selbgcolor);
 	dimcol = initcolor(dc, dimcolor, dimcolor);
 
-   if(noinput) {
-      grabkeyboard();
-      grabpointer();
-   }
-   else if(fast) {
-      grabkeyboard();
-      grabpointer();
-      readstdin();
-   }
-   else {
-      readstdin();
-      grabkeyboard();
-      grabpointer();
-   }
+	if(noinput) {
+		grabkeyboard();
+		grabpointer();
+	}
+	else if(fast) {
+		grabkeyboard();
+		grabpointer();
+		readstdin();
+	}
+	else {
+		readstdin();
+		grabkeyboard();
+		grabpointer();
+	}
 	setup();
 	run();
 
@@ -238,9 +238,9 @@ read_resourses(void) {
 	if( normfgcolor == NULL )
 		normfgcolor = "#bbbbbb";
 	if( selbgcolor == NULL )
-		selbgcolor  = "#005577";
+		selbgcolor	= "#005577";
 	if( selfgcolor == NULL )
-		selfgcolor  = "#eeeeee";
+		selfgcolor	= "#eeeeee";
 	if( dimcolor == NULL )
 		dimcolor = "#000000";
 	if( !opacity )
@@ -288,35 +288,35 @@ cistrstr(const char *s, const char *sub) {
 
 void
 cleanup(void) {
-    freecol(dc, normcol);
-    freecol(dc, selcol);
+	freecol(dc, normcol);
+	freecol(dc, selcol);
 		freecol(dc, dimcol);
-    XDestroyWindow(dc->dpy, win);
+	XDestroyWindow(dc->dpy, win);
 		if(dimopacity > 0)
 			XDestroyWindow(dc->dpy, dim);
-    XUngrabKeyboard(dc->dpy, CurrentTime);
-    XUngrabPointer(dc->dpy, CurrentTime);
-    freedc(dc);
+	XUngrabKeyboard(dc->dpy, CurrentTime);
+	XUngrabPointer(dc->dpy, CurrentTime);
+	freedc(dc);
 }
 
 const char *
 createmaskinput(char *maskinput, int length)
 {
-   if (length <= 0) {
-      *maskinput = '\0';
-   } else {
-      memset(maskinput, '*', length);
-      maskinput[length] = '\0';
-   }
+	if (length <= 0) {
+		*maskinput = '\0';
+	} else {
+		memset(maskinput, '*', length);
+		maskinput[length] = '\0';
+	}
 
-   return (maskinput);
+	return (maskinput);
 }
 
 void
 drawmenu(void) {
 	int curpos;
-   char maskinput[sizeof text];
-   int length = maskin ? utf8length() : cursor;
+	char maskinput[sizeof text];
+	int length = maskin ? utf8length() : cursor;
 	Item *item;
 
 	dc->x = 0;
@@ -337,34 +337,34 @@ drawmenu(void) {
 	if((curpos = textnw(dc, maskin ? maskinput : text, length) + dc->font.height/2) < dc->w)
 		drawrect(dc, curpos, (dc->h - dc->font.height)/2 + 1, 1, dc->font.height -1, True, normcol->FG);
 
-    if(!quiet || strlen(text) > 0) {    
-        if(lines > 0) {
-            /* draw vertical list */
+	if(!quiet || strlen(text) > 0) {	
+		if(lines > 0) {
+			/* draw vertical list */
 			if(vertfull)
 				dc->x = 0;
-            dc->w = mw - dc->x;
-            for(item = curr; item != next; item = item->right) {
-                dc->y += dc->h;
-                drawtext(dc, item->text, (item == sel) ? selcol : normcol);
-            }
-        }
-        else if(matches) {
-            /* draw horizontal list */
-            dc->x += inputw;
-            dc->w = textw(dc, "<");
-            if(curr->left)
-                drawtext(dc, "<", normcol);
-            for(item = curr; item != next; item = item->right) {
-                dc->x += dc->w;
-                dc->w = MIN(textw(dc, item->text), mw - dc->x - textw(dc, ">"));
-                drawtext(dc, item->text, (item == sel) ? selcol : normcol);
-            }
-            dc->w = textw(dc, ">");
-            dc->x = mw - dc->w;
-            if(next)
-                drawtext(dc, ">", normcol);
-        }
-    }
+			dc->w = mw - dc->x;
+			for(item = curr; item != next; item = item->right) {
+				dc->y += dc->h;
+				drawtext(dc, item->text, (item == sel) ? selcol : normcol);
+			}
+		}
+		else if(matches) {
+			/* draw horizontal list */
+			dc->x += inputw;
+			dc->w = textw(dc, "<");
+			if(curr->left)
+				drawtext(dc, "<", normcol);
+			for(item = curr; item != next; item = item->right) {
+				dc->x += dc->w;
+				dc->w = MIN(textw(dc, item->text), mw - dc->x - textw(dc, ">"));
+				drawtext(dc, item->text, (item == sel) ? selcol : normcol);
+			}
+			dc->w = textw(dc, ">");
+			dc->x = mw - dc->w;
+			if(next)
+				drawtext(dc, ">", normcol);
+		}
+	}
 	mapdc(dc, win, mw, mh);
 }
 
@@ -374,8 +374,7 @@ grabkeyboard(void) {
 
 	/* try to grab keyboard, we may have to wait for another process to ungrab */
 	for(i = 0; i < 1000; i++) {
-		if(XGrabKeyboard(dc->dpy, DefaultRootWindow(dc->dpy), True,
-		                 GrabModeAsync, GrabModeAsync, CurrentTime) == GrabSuccess)
+		if(XGrabKeyboard(dc->dpy, DefaultRootWindow(dc->dpy), True, GrabModeAsync, GrabModeAsync, CurrentTime) == GrabSuccess)
 			return;
 		usleep(1000);
 	}
@@ -387,8 +386,7 @@ void grabpointer(void) {
 
 	/* try to grab pointer, we may have to wait for another process to ungrab */
 	for (i = 0; i < 1000; i++) {
-		if (XGrabPointer(dc->dpy, DefaultRootWindow(dc->dpy), True, ButtonPress,
-				 GrabModeAsync, GrabModeAsync, None, None, CurrentTime) == GrabSuccess)
+		if (XGrabPointer(dc->dpy, DefaultRootWindow(dc->dpy), True, ButtonPress, GrabModeAsync, GrabModeAsync, None, None, CurrentTime) == GrabSuccess)
 			return;
 		usleep(1000);
 	}
@@ -419,21 +417,21 @@ keypress(XKeyEvent *ev) {
 		return;
 	if(ev->state & ControlMask)
 		switch(ksym) {
-		case XK_a: ksym = XK_Home;      break;
-		case XK_b: ksym = XK_Left;      break;
-		case XK_c: ksym = XK_Escape;    break;
-		case XK_d: ksym = XK_Delete;    break;
-		case XK_e: ksym = XK_End;       break;
-		case XK_f: ksym = XK_Right;     break;
-		case XK_g: ksym = XK_Escape;    break;
+		case XK_a: ksym = XK_Home;		break;
+		case XK_b: ksym = XK_Left;		break;
+		case XK_c: ksym = XK_Escape;	break;
+		case XK_d: ksym = XK_Delete;	break;
+		case XK_e: ksym = XK_End;		break;
+		case XK_f: ksym = XK_Right;		break;
+		case XK_g: ksym = XK_Escape;	break;
 		case XK_h: ksym = XK_BackSpace; break;
-		case XK_i: ksym = XK_Tab;       break;
+		case XK_i: ksym = XK_Tab;		break;
 		case XK_j: /* fallthrough */
-		case XK_J: ksym = XK_Return;    break;
+		case XK_J: ksym = XK_Return;	break;
 		case XK_m: /* fallthrough */
-		case XK_M: ksym = XK_Return;    break;
-		case XK_n: ksym = XK_Down;      break;
-		case XK_p: ksym = XK_Up;        break;
+		case XK_M: ksym = XK_Return;	break;
+		case XK_n: ksym = XK_Down;		break;
+		case XK_p: ksym = XK_Up;		break;
 
 		case XK_k: /* delete right */
 			text[cursor] = '\0';
@@ -450,27 +448,26 @@ keypress(XKeyEvent *ev) {
 			break;
 		case XK_y: /* fallthrough */
 		case XK_Y: /* paste selection */
-			XConvertSelection(dc->dpy, (ev->state & ShiftMask) ? clip : XA_PRIMARY,
-			                  utf8, utf8, win, CurrentTime);
+			XConvertSelection(dc->dpy, (ev->state & ShiftMask) ? clip : XA_PRIMARY, utf8, utf8, win, CurrentTime);
 			return;
 		default:
 			return;
 		}
 	else if(ev->state & Mod1Mask)
 		switch(ksym) {
-		case XK_g: ksym = XK_Home;  break;
-		case XK_G: ksym = XK_End;   break;
-		case XK_h: ksym = XK_Up;    break;
-		case XK_j: ksym = XK_Next;  break;
+		case XK_g: ksym = XK_Home;	break;
+		case XK_G: ksym = XK_End;	break;
+		case XK_h: ksym = XK_Up;	break;
+		case XK_j: ksym = XK_Next;	break;
 		case XK_k: ksym = XK_Prior; break;
-		case XK_l: ksym = XK_Down;  break;
+		case XK_l: ksym = XK_Down;	break;
 		default:
 			return;
 		}
 	switch(ksym) {
 	default:
 		if(!iscntrl(*buf))
-         insert(buf, len);
+			insert(buf, len);
 		break;
 	case XK_Delete:
 		if(text[cursor] == '\0')
@@ -499,8 +496,8 @@ keypress(XKeyEvent *ev) {
 		sel = matchend;
 		break;
 	case XK_Escape:
-        ret = EXIT_FAILURE;
-        running = False;
+		ret = EXIT_FAILURE;
+		running = False;
 	case XK_Home:
 		if(sel == matches) {
 			cursor = 0;
@@ -537,16 +534,16 @@ keypress(XKeyEvent *ev) {
 		break;
 	case XK_Return:
 	case XK_KP_Enter:
- 		if((ev->state & ShiftMask) || !sel)
- 			puts(text);
- 		else if(!filter)
- 			puts(sel->text);
- 		else {
- 			for(Item *item = sel; item; item = item->right)
- 				puts(item->text);
- 			for(Item *item = matches; item != sel; item = item->right)
- 				puts(item->text);
- 		}
+		if((ev->state & ShiftMask) || !sel)
+			puts(text);
+		else if(!filter)
+			puts(sel->text);
+		else {
+			for(Item *item = sel; item; item = item->right)
+				puts(item->text);
+			for(Item *item = matches; item != sel; item = item->right)
+				puts(item->text);
+		}
 		ret = EXIT_SUCCESS;
 		running = False;
 	case XK_Right:
@@ -621,7 +618,7 @@ strchri(const char *s, int c) {
 		u = strchr(s, toupper(c));
 	}
 
-  return u == NULL? l : u;
+	return u == NULL? l : u;
 }
 
 void
@@ -715,17 +712,16 @@ buttonpress(XEvent *e) {
 	 * NOTE: if there is no left-arrow the space for < is reserved so
 	 *       add that to the input width */
 	if(ev->button == Button1 &&
-	   ((lines <= 0 && ev->x >= 0 && ev->x <= dc->x + dc->w +
-	   ((!prev || !curr->left) ? textw(dc, "<") : 0)) ||
-	   (lines > 0 && ev->y >= dc->y && ev->y <= dc->y + dc->h))) {
+		((lines <= 0 && ev->x >= 0 && ev->x <= dc->x + dc->w +
+		((!prev || !curr->left) ? textw(dc, "<") : 0)) ||
+		(lines > 0 && ev->y >= dc->y && ev->y <= dc->y + dc->h))) {
 		insert(NULL, 0 - cursor);
 		drawmenu();
 		return;
 	}
 	/* middle-mouse click: paste selection */
 	if(ev->button == Button2) {
-		XConvertSelection(dc->dpy, (ev->state & ShiftMask) ? clip : XA_PRIMARY,
-		                  utf8, utf8, win, CurrentTime);
+		XConvertSelection(dc->dpy, (ev->state & ShiftMask) ? clip : XA_PRIMARY, utf8, utf8, win, CurrentTime);
 		drawmenu();
 		return;
 	}
@@ -902,16 +898,15 @@ nextrune(int inc) {
 size_t
 utf8length()
 {
-   ssize_t n = cursor - 1, length = 0;
+	ssize_t n = cursor - 1, length = 0;
 
-   while (n >= 0) {
-      for (; n - 1 >= 0 && (text[n] & 0xc0) == 0x80; n--)
-         ;
-      n--;
-      length++;
-   }
+	while (n >= 0) {
+		for (; n - 1 >= 0 && (text[n] & 0xc0) == 0x80; n--) ;
+		n--;
+		length++;
+	}
 
-   return (length);
+	return (length);
 }
 
 void
@@ -922,8 +917,7 @@ paste(void) {
 	Atom da;
 
 	/* we have been given the current selection, now insert it into input */
-	XGetWindowProperty(dc->dpy, win, utf8, 0, (sizeof text / 4) + 1, False,
-	                   utf8, &da, &di, &dl, &dl, (unsigned char **)&p);
+	XGetWindowProperty(dc->dpy, win, utf8, 0, (sizeof text / 4) + 1, False, utf8, &da, &di, &dl, &dl, (unsigned char **)&p);
 	insert(p, (q = strchr(p, '\n')) ? q-p : (ssize_t)strlen(p));
 	XFree(p);
 	drawmenu();
@@ -962,7 +956,7 @@ run(void) {
 		switch(ev.type) {
 		case MotionNotify:
 			while(XCheckTypedEvent(dc->dpy, MotionNotify, &ev))
-			      (void)0;
+				(void)0;
 			pointermove(&ev);
 			break;
 		case ButtonPress:
@@ -1084,15 +1078,15 @@ setup(void) {
 		swa.background_pixel = dimcol->BG;
 		swa.event_mask = ExposureMask | KeyPressMask | VisibilityChangeMask;
 		dim = XCreateWindow(dc->dpy, root, dimx, dimy, dimw, dimh, 0,
-	                    DefaultDepth(dc->dpy, screen), CopyFromParent,
-	                    DefaultVisual(dc->dpy, screen),
-	                    CWOverrideRedirect | CWBackPixel | CWEventMask, &swa);
+						DefaultDepth(dc->dpy, screen), CopyFromParent,
+						DefaultVisual(dc->dpy, screen),
+						CWOverrideRedirect | CWBackPixel | CWEventMask, &swa);
 		XClassHint dimhint = { .res_name = dimname, .res_class = class };
-  	XSetClassHint(dc->dpy, dim, &dimhint);
-  
+	XSetClassHint(dc->dpy, dim, &dimhint);
+
 		dimopacity = MIN(MAX(dimopacity, 0), 1);
-  	unsigned int dimopacity_set = (unsigned int)(dimopacity * OPAQUE);
-  	XChangeProperty(dc->dpy, dim, XInternAtom(dc->dpy, OPACITY, False),
+	unsigned int dimopacity_set = (unsigned int)(dimopacity * OPAQUE);
+	XChangeProperty(dc->dpy, dim, XInternAtom(dc->dpy, OPACITY, False),
 											XA_CARDINAL, 32, PropModeReplace,
 											(unsigned char *) &dimopacity_set, 1L);
 	
@@ -1103,22 +1097,22 @@ setup(void) {
 	swa.background_pixel = normcol->BG;
 	swa.event_mask = ExposureMask | KeyPressMask | VisibilityChangeMask | ButtonPressMask | PointerMotionMask;
 	win = XCreateWindow(dc->dpy, root, x, y, mw, mh, 0,
-	                    DefaultDepth(dc->dpy, screen), CopyFromParent,
-	                    DefaultVisual(dc->dpy, screen),
-	                    CWOverrideRedirect | CWBackPixel | CWEventMask, &swa);
-  XClassHint hint = { .res_name = name, .res_class = class };
-  XSetClassHint(dc->dpy, win, &hint);
+						DefaultDepth(dc->dpy, screen), CopyFromParent,
+						DefaultVisual(dc->dpy, screen),
+						CWOverrideRedirect | CWBackPixel | CWEventMask, &swa);
+	XClassHint hint = { .res_name = name, .res_class = class };
+	XSetClassHint(dc->dpy, win, &hint);
 
-  opacity = MIN(MAX(opacity, 0), 1);
-  unsigned int opacity_set = (unsigned int)(opacity * OPAQUE);
-  XChangeProperty(dc->dpy, win, XInternAtom(dc->dpy, OPACITY, False),
+	opacity = MIN(MAX(opacity, 0), 1);
+	unsigned int opacity_set = (unsigned int)(opacity * OPAQUE);
+	XChangeProperty(dc->dpy, win, XInternAtom(dc->dpy, OPACITY, False),
 											XA_CARDINAL, 32, PropModeReplace,
 											(unsigned char *) &opacity_set, 1L);
 	
 	/* open input methods */
 	xim = XOpenIM(dc->dpy, NULL, NULL, NULL);
 	xic = XCreateIC(xim, XNInputStyle, XIMPreeditNothing | XIMStatusNothing,
-	                XNClientWindow, win, XNFocusWindow, win, NULL);
+					XNClientWindow, win, XNFocusWindow, win, NULL);
 
 	XMapRaised(dc->dpy, win);
 	resizedc(dc, mw, mh);
@@ -1127,10 +1121,10 @@ setup(void) {
 
 void
 usage(void) {
-	fputs("usage: dmenu [-b] [-q] [-f] [-r] [-i] [-z] [-t] [-mask] [-noinput]\n"
-				"             [-s screen] [-name name] [-class class] [ -o opacity]\n"
-				"             [-dim opcity] [-dc color] [-l lines] [-p prompt] [-fn font]\n"
-	      "             [-x xoffset] [-y yoffset] [-h height] [-w width]\n"
-	      "             [-nb color] [-nf color] [-sb color] [-sf color] [-v]\n", stderr);
+	fputs("usage:\ndmenu [-b] [-q] [-f] [-r] [-i] [-z] [-t] [-mask] [-noinput]\n"
+		"      [-s screen] [-name name] [-class class] [ -o opacity]\n"
+		"      [-dim opcity] [-dc color] [-l lines] [-p prompt] [-fn font]\n"
+		"      [-x xoffset] [-y yoffset] [-h height] [-w width]\n"
+		"      [-nb color] [-nf color] [-sb color] [-sf color] [-v]\n", stderr);
 	exit(EXIT_FAILURE);
 }

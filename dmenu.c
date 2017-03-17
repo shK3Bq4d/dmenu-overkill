@@ -1025,9 +1025,11 @@ setup(void) {
 	lines = MAX(lines, 0);
 	menu_height = MAX(menu_height, 0);
 	bh = (line_height > dc->font.height + 2) ? line_height : dc->font.height + 2;
-	if(menu_height > 0)
+	if(menu_height > 0) {
 		lines = (menu_height / bh) - 1;
-	mh = (lines + 1) * bh;
+		mh = menu_height;
+	} else
+		mh = (lines + 1) * bh;
 #ifdef XINERAMA
 	if((info = XineramaQueryScreens(dc->dpy, &n))) {
 		int a, j, di, i = 0, area = 0;

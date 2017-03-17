@@ -65,6 +65,7 @@ static char *name = "dmenu";
 static char *class = "Dmenu";
 static char *dimname = "dimenu";
 static unsigned int lines = 0, line_height = 0;
+static unsigned int menu_height = 0;
 static int xoffset = 0;
 static int yoffset = 0;
 static int width = 0;
@@ -146,6 +147,8 @@ main(int argc, char *argv[]) {
 			lines = atoi(argv[++i]);
 		else if(!strcmp(argv[i], "-h"))   /* minimum height of single line */
 			line_height = atoi(argv[++i]);
+		else if(!strcmp(argv[i], "-mh")) /* height of the menu in total */
+			menu_height = atoi(argv[++i]);
 		#ifdef XINERAMA
 		else if(!strcmp(argv[i], "-s"))   /* screen number for dmenu to appear in */
 			snum = atoi(argv[++i]);
@@ -999,8 +1002,19 @@ setup(void) {
 	utf8 = XInternAtom(dc->dpy, "UTF8_STRING", False);
 
 	/* calculate menu geometry */
-	bh = (line_height > dc->font.height + 2) ? line_height : dc->font.height + 2;
 	lines = MAX(lines, 0);
+	menu_height = MAX(menu_height, 0);
+	if(menu_height > 0) {
+		if(lines > 0 && line_height == 0)
+			line_height = menu_height / (lines + 1);
+		else if(lines == 0 && line_height > 0)
+			lines = (menu_height / line_height) - 1;
+		else if(lines == 0 && line_height == 0)
+			lines = (menu_height / (dc->font.height + 2)) - 1;
+		else
+			eprintf("-mh, -h, and -l cannot all be set at once.\n");
+	}
+	bh = (line_height > dc->font.height + 2) ? line_height : dc->font.height + 2;
 	mh = (lines + 1) * bh;
 #ifdef XINERAMA
 	if((info = XineramaQueryScreens(dc->dpy, &n))) {
@@ -1125,7 +1139,7 @@ usage(void) {
 		"dmenu [-b] [-q] [-f] [-r] [-i] [-z] [-t] [-mask] [-noinput] [-vf]\n"
 		"      [-s screen] [-name name] [-class class] [ -o opacity]\n"
 		"      [-dim opcity] [-dc color] [-l lines] [-p prompt] [-fn font]\n"
-		"      [-x xoffset] [-y yoffset] [-h height] [-w width]\n"
+		"      [-x xoffset] [-y yoffset] [-h height] [-w width] [-mh menuheight]\n"
 		"      [-nb color] [-nf color] [-sb color] [-sf color] [-v]\n", stderr);
 	exit(EXIT_FAILURE);
 }

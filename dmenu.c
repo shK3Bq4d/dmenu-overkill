@@ -346,8 +346,11 @@ drawmenu(void) {
 	if(!quiet || strlen(text) > 0) {	
 		if(lines > 0) {
 			/* draw vertical list */
-			if(vertfull)
+			if(vertfull) {
 				dc->x = 0;
+				drawrect(dc, dc->x, dc->y + dc->h + 2, mw, 1, True, normcol->BG);
+				dc->y += 1;
+			}
 			dc->w = mw - dc->x;
 			for(item = curr; item != next; item = item->right) {
 				dc->y += dc->h;

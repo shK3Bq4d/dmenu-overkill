@@ -1138,7 +1138,7 @@ usage(void) {
 	fputs("usage:\n"
 		"dmenu [-b] [-q] [-f] [-r] [-i] [-z] [-t] [-mask] [-noinput] [-vf]\n"
 		"      [-s screen] [-name name] [-class class] [ -o opacity]\n"
-		"      [-dim opcity] [-dc color] [-l lines] [-p prompt] [-fn font]\n"
+		"      [-dim opacity] [-dc color] [-l lines] [-p prompt] [-fn font]\n"
 		"      [-x xoffset] [-y yoffset] [-h height] [-w width] [-mh menuheight]\n"
 		"      [-nb color] [-nf color] [-sb color] [-sf color] [-v]\n", stderr);
 	exit(EXIT_FAILURE);

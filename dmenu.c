@@ -1062,7 +1062,7 @@ setup(void) {
 #endif
 	{
 		x = 0;
-		y = topbar ? 0 : DisplayHeight(dc->dpy, screen) - mh - yoffset;
+		y = topbar ? yoffset : DisplayHeight(dc->dpy, screen) - mh - yoffset;
 		mw = DisplayWidth(dc->dpy, screen);
 
 		dimx = 0;

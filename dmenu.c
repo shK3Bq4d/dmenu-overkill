@@ -68,7 +68,7 @@ static unsigned int lines = 0, line_height = 0;
 static unsigned int menu_height = 0;
 static int xoffset = 0;
 static int yoffset = 0;
-static int width = 0;
+static int width = -1;
 static int scrolloff = 4; /* default value that I like */
 #ifdef XINERAMA
 static int snum = -1;
@@ -142,10 +142,8 @@ main(int argc, char *argv[]) {
 			xoffset = atoi(argv[++i]);
 		else if(!strcmp(argv[i], "-y"))
 			yoffset = atoi(argv[++i]);
-		else if(!strcmp(argv[i], "-w")) {
+		else if(!strcmp(argv[i], "-w")) /* width of menu */
 			width = atoi(argv[++i]);
-			width = width ? width : inputw;
-		}
 		else if(!strcmp(argv[i], "-l"))   /* number of lines in vertical list */
 			lines = atoi(argv[++i]);
 		else if(!strcmp(argv[i], "-h"))   /* minimum height of single line */
@@ -1096,11 +1094,14 @@ setup(void) {
 	}
 
 	x += xoffset;
-	if(width) {
-		mw = width;
+
+	if(width != 0) {
+		mw = (width > 0) ? width : mw;
 		inputw = MIN(inputw, mw/3);
-	} else
+	} else {
 		mw = inputw;
+	}
+
 	promptw = (prompt && *prompt) ? textw(dc, prompt) : 0;
 	match();
 

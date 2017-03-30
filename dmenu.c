@@ -142,8 +142,10 @@ main(int argc, char *argv[]) {
 			xoffset = atoi(argv[++i]);
 		else if(!strcmp(argv[i], "-y"))
 			yoffset = atoi(argv[++i]);
-		else if(!strcmp(argv[i], "-w"))
+		else if(!strcmp(argv[i], "-w")) {
 			width = atoi(argv[++i]);
+			width = width ? width : inputw;
+		}
 		else if(!strcmp(argv[i], "-l"))   /* number of lines in vertical list */
 			lines = atoi(argv[++i]);
 		else if(!strcmp(argv[i], "-h"))   /* minimum height of single line */
@@ -1094,9 +1096,12 @@ setup(void) {
 	}
 
 	x += xoffset;
-	mw = width ? width : mw;
+	if(width) {
+		mw = width;
+		inputw = MIN(inputw, mw/3);
+	} else
+		mw = inputw;
 	promptw = (prompt && *prompt) ? textw(dc, prompt) : 0;
-	inputw = MIN(inputw, mw/3);
 	match();
 
 	swa.override_redirect = True;

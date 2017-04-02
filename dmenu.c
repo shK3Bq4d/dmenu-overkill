@@ -51,7 +51,8 @@ static void usage(void);
 static void read_resourses(void);
 static char text[BUFSIZ] = "";
 static char originaltext[BUFSIZ] = "";
-static int bh, mw, mh, sw, sh;
+static int bh, mw, mh;
+static char *embed;
 static int inputw, promptw;
 static size_t cursor = 0;
 static const char *font = NULL;
@@ -93,7 +94,7 @@ static DC *dc;
 static Item *items = NULL;
 static Item *matches, *matchend;
 static Item *prev, *curr, *next, *sel;
-static Window win, dim;
+static Window parentwin, win, dim;
 static XIC xic;
 static double opacity = 1.0, dimopacity = 0.0;
 
@@ -194,6 +195,8 @@ main(int argc, char *argv[]) {
 			selbgcolor = argv[++i];
 		else if(!strcmp(argv[i], "-sf"))  /* selected foreground color */
 			selfgcolor = argv[++i];
+		else if(!strcmp(argv[i], "-e")) /* embedding window id */
+			embed = argv[++i];
 		else
 			usage();
 
@@ -394,8 +397,27 @@ drawmenu(void) {
 }
 
 void
+grabfocus(void)
+{
+	Window focuswin;
+	int i, revertwin;
+
+	for(i = 0; i < 100; ++i) {
+		XGetInputFocus(dc->dpy, &focuswin, &revertwin);
+		if(focuswin == win)
+			return;
+		XSetInputFocus(dc->dpy, win, RevertToParent, CurrentTime);
+		/* nanosleep(&ts, NULL); */ /* include time.h */
+	}
+	eprintf("cannot grab focus\n");
+}
+
+void
 grabkeyboard(void) {
 	int i;
+
+	if(embed)
+		return;
 
 	/* try to grab keyboard, we may have to wait for another process to ungrab */
 	for(i = 0; i < 1000; i++) {
@@ -1025,6 +1047,11 @@ run(void) {
 			if(ev.xexpose.count == 0)
 				mapdc(dc, win, mw, mh);
 			break;
+		case FocusIn:
+			/* regrab focus from parent window */
+			if(ev.xfocus.window != win)
+				grabfocus();
+			break;
 		case KeyPress:
 			keypress(&ev.xkey);
 			break;
@@ -1043,28 +1070,32 @@ run(void) {
 void
 setup(void) {
 	int x, y, screen = DefaultScreen(dc->dpy);
-	Screen *defScreen = DefaultScreenOfDisplay(dc->dpy);
+	int sx = 0, sy = 0, sw, sh;
 	int dimx, dimy, dimw, dimh;
 	Window root = RootWindow(dc->dpy, screen);
 	XSetWindowAttributes swa;
+	XWindowAttributes wa;
 	XIM xim;
 
 #ifdef XINERAMA
 	int n;
 	XineramaScreenInfo *info;
+	int a, j, di, i = 0, area = 0;
+	unsigned int du;
+	Window w, pw, dw, *dws;
 #endif
 
 	clip = XInternAtom(dc->dpy, "CLIPBOARD",   False);
 	utf8 = XInternAtom(dc->dpy, "UTF8_STRING", False);
 
+	if (!embed || !(parentwin = strtol(embed, NULL, 0)))
+		parentwin = root;
+	if (!XGetWindowAttributes(dc->dpy, parentwin, &wa))
+		eprintf("could not get embedding window attributes: 0x%lx", parentwin);
+
 	/* SCREEN STUFF */
 #ifdef XINERAMA
-	if((info = XineramaQueryScreens(dc->dpy, &n))) {
-		int a, j, di, i = 0, area = 0;
-		unsigned int du;
-		Window w, pw, dw, *dws;
-		XWindowAttributes wa;
-
+	if(parentwin == root && (info = XineramaQueryScreens(dc->dpy, &n))) {
 		if(snum > -1 && snum < n) {
 			x = info[snum].x_org;
 			y = info[snum].y_org;
@@ -1113,15 +1144,16 @@ setup(void) {
 	else
 #endif
 	{
-		x = 0;
-		y = 0;
-		sw = DisplayWidth(dc->dpy, screen);
-		sh = DisplayHeight(dc->dpy, screen);
+		sx = wa.x + wa.border_width;
+		sy = wa.y + wa.border_width;
+		sw = wa.width;
+		sh = wa.height;
+		x = y = 0;
 
-		dimx = x;
-		dimy = y;
-		dimw = WidthOfScreen(defScreen); 
-		dimh = HeightOfScreen(defScreen);
+		dimx = sx;
+		dimy = sy;
+		dimw = sw;
+		dimh = sh;
 	}
 
 	/* calculate geometry */
@@ -1144,14 +1176,14 @@ setup(void) {
 		mh = (lines + 1) * bh;
 	}
 
-	x += centerx ? ((sw - mw) / 2) : xoffset;
-	y += centery ? ((sh - mh) / 2) : (topbar ? yoffset : sh - mh - yoffset);
-	if(x < 0) x = 0;
-	if(y < 0) y = 0;
-	if(x + mw > sw)
-		mw = sw - x;
-	if(y + mh > sh) {
-		mh = sh - y;
+	x += sx + (centerx ? ((sw - mw) / 2) : xoffset);
+	y += sy + (centery ? ((sh - mh) / 2) : (topbar ? yoffset : sh - mh - yoffset));
+	if(x < sx) x = sx;
+	if(y < sy) y = sy;
+	if(x + mw > sx + sw)
+		mw = sx + sw - x;
+	if(y + mh > sy + sh) {
+		mh = sy + sh - y;
 		lines = (mh / bh) - 1;
 	}
 
@@ -1184,8 +1216,7 @@ setup(void) {
 	swa.background_pixel = normcol->BG;
 	swa.event_mask = ExposureMask | KeyPressMask | VisibilityChangeMask | ButtonPressMask | PointerMotionMask;
 	win = XCreateWindow(dc->dpy, root, x, y, mw, mh, 0,
-						DefaultDepth(dc->dpy, screen), CopyFromParent,
-						DefaultVisual(dc->dpy, screen),
+						CopyFromParent, CopyFromParent, CopyFromParent,
 						CWOverrideRedirect | CWBackPixel | CWEventMask, &swa);
 	XClassHint hint = { .res_name = name, .res_class = class };
 	XSetClassHint(dc->dpy, win, &hint);
@@ -1202,6 +1233,15 @@ setup(void) {
 					XNClientWindow, win, XNFocusWindow, win, NULL);
 
 	XMapRaised(dc->dpy, win);
+	if(embed) {
+		XSelectInput(dc->dpy, parentwin, FocusChangeMask);
+		if (XQueryTree(dc->dpy, parentwin, &dw, &w, &dws, &du) && dws) {
+			for (i = 0; i < du && dws[i] != win; ++i)
+				XSelectInput(dc->dpy, dws[i], FocusChangeMask);
+			XFree(dws);
+		}
+		grabfocus();
+	}
 	resizedc(dc, mw, mh);
 	drawmenu();
 }

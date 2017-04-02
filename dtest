@@ -1,6 +1,6 @@
 #!/bin/bash
 
-make
+make >/dev/null 2>&1 || exit $?
 
 t="$(printf '%s\n' {1..10000} abcdefghijklmnopqrstuvwxyzABCDEFGHIJ)"
 

@@ -1,5 +1,7 @@
 #!/bin/bash
 
+make
+
 t="$(printf '%s\n' {1..10000} abcdefghijklmnopqrstuvwxyzABCDEFGHIJ)"
 
 ./dmenu $@ <<<$t

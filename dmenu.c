@@ -407,7 +407,7 @@ grabfocus(void)
 		if(focuswin == win)
 			return;
 		XSetInputFocus(dc->dpy, win, RevertToParent, CurrentTime);
-		/* nanosleep(&ts, NULL); */ /* include time.h */
+		usleep(1000);
 	}
 	eprintf("cannot grab focus\n");
 }
@@ -1070,19 +1070,18 @@ run(void) {
 void
 setup(void) {
 	int x, y, screen = DefaultScreen(dc->dpy);
-	int sx = 0, sy = 0, sw, sh;
+	int sw, sh;
 	int dimx, dimy, dimw, dimh;
 	Window root = RootWindow(dc->dpy, screen);
 	XSetWindowAttributes swa;
-	XWindowAttributes wa;
 	XIM xim;
 
 #ifdef XINERAMA
-	int n;
 	XineramaScreenInfo *info;
-	int a, j, di, i = 0, area = 0;
-	unsigned int du;
 	Window w, pw, dw, *dws;
+	XWindowAttributes wa;
+	int a, j, n, di, i = 0, area = 0;
+	unsigned int du;
 #endif
 
 	clip = XInternAtom(dc->dpy, "CLIPBOARD",   False);
@@ -1144,14 +1143,12 @@ setup(void) {
 	else
 #endif
 	{
-		sx = wa.x + wa.border_width;
-		sy = wa.y + wa.border_width;
 		sw = wa.width;
 		sh = wa.height;
 		x = y = 0;
 
-		dimx = sx;
-		dimy = sy;
+		dimx = wa.x + wa.border_width;
+		dimy = wa.y + wa.border_width;
 		dimw = sw;
 		dimh = sh;
 	}
@@ -1176,14 +1173,17 @@ setup(void) {
 		mh = (lines + 1) * bh;
 	}
 
-	x += sx + (centerx ? ((sw - mw) / 2) : xoffset);
-	y += sy + (centery ? ((sh - mh) / 2) : (topbar ? yoffset : sh - mh - yoffset));
-	if(x < sx) x = sx;
-	if(y < sy) y = sy;
-	if(x + mw > sx + sw)
-		mw = sx + sw - x;
-	if(y + mh > sy + sh) {
-		mh = sy + sh - y;
+	x += (centerx ? ((sw - mw) / 2) : xoffset);
+	y += (centery ? ((sh - mh) / 2) : (topbar ? yoffset : sh - mh - yoffset));
+	/* Sanitize values */
+	if(x < 0) x = 0; /* negative x and y make no sense */
+	if(y < 0) y = 0;
+	if(x > sw) x = sw - mw; /* x and y out-of-bounds make no sense either */
+	if(y > sh) y = sh - mh;
+	if(x + mw > sw) /* even with all those checks, the menu can still be too */
+		mw = sw - x;    /* wide or too tall. */
+	if(y + mh > sh) {
+		mh = sh - y;
 		lines = (mh / bh) - 1;
 	}
 
@@ -1215,7 +1215,7 @@ setup(void) {
 	/* create menu window */
 	swa.background_pixel = normcol->BG;
 	swa.event_mask = ExposureMask | KeyPressMask | VisibilityChangeMask | ButtonPressMask | PointerMotionMask;
-	win = XCreateWindow(dc->dpy, root, x, y, mw, mh, 0,
+	win = XCreateWindow(dc->dpy, parentwin, x, y, mw, mh, 0,
 						CopyFromParent, CopyFromParent, CopyFromParent,
 						CWOverrideRedirect | CWBackPixel | CWEventMask, &swa);
 	XClassHint hint = { .res_name = name, .res_class = class };

@@ -197,6 +197,11 @@ main(int argc, char *argv[]) {
 			selfgcolor = argv[++i];
 		else if(!strcmp(argv[i], "-e")) /* embedding window id */
 			embed = argv[++i];
+		else if(!strcmp(argv[i], "-m")) {
+			if (!strncmp(argv[++i], "0x", 2))
+				embed = argv[i];
+			else snum = atoi(argv[i]);
+		}
 		else
 			usage();
 
@@ -1069,8 +1074,8 @@ run(void) {
 
 void
 setup(void) {
-	int x, y, screen = DefaultScreen(dc->dpy);
-	int sw, sh;
+	int mx, my, screen = DefaultScreen(dc->dpy);
+	int sx, sy, sw, sh;
 	int dimx, dimy, dimw, dimh;
 	Window root = RootWindow(dc->dpy, screen);
 	XSetWindowAttributes swa;
@@ -1096,17 +1101,11 @@ setup(void) {
 #ifdef XINERAMA
 	if(parentwin == root && (info = XineramaQueryScreens(dc->dpy, &n))) {
 		if(snum > -1 && snum < n) {
-			x = info[snum].x_org;
-			y = info[snum].y_org;
+			sx = info[snum].x_org;
+			sy = info[snum].y_org;
 			sw = info[snum].width;
 			sh = info[snum].height;
-
-			dimx = x;
-			dimy = y;
-			dimw = sw;
-			dimh = sh;
-		}
-		else {
+		} else {
 			XGetInputFocus(dc->dpy, &w, &di);
 			if(w != root && w != PointerRoot && w != None) {
 				/* find top-level window containing current input focus */
@@ -1123,34 +1122,25 @@ setup(void) {
 						}
 			}
 			/* no focused window is on screen, so use pointer location instead */
-			if(!area && XQueryPointer(dc->dpy, root, &dw, &dw, &x, &y, &di, &di, &du))
+			if(!area && XQueryPointer(dc->dpy, root, &dw, &dw, &mx, &my, &di, &di, &du))
 				for(i = 0; i < n; i++)
-					if(INTERSECT(x, y, 1, 1, info[i]))
+					if(INTERSECT(mx, my, 1, 1, info[i]))
 						break;
 
-			x = info[i].x_org;
-			y = info[i].y_org;
+			sx = info[i].x_org;
+			sy = info[i].y_org;
 			sw = info[i].width;
 			sh = info[i].height;
-
-			dimx = x;
-			dimy = y;
-			dimw = sw;
-			dimh = sh;
 		}
 		XFree(info);
 	}
 	else
 #endif
 	{
+		sx = wa.x;
+		sy = wa.y;
 		sw = wa.width;
 		sh = wa.height;
-		x = y = 0;
-
-		dimx = wa.x + wa.border_width;
-		dimy = wa.y + wa.border_width;
-		dimw = sw;
-		dimh = sh;
 	}
 
 	/* calculate geometry */
@@ -1173,17 +1163,19 @@ setup(void) {
 		mh = (lines + 1) * bh;
 	}
 
-	x += (centerx ? ((sw - mw) / 2) : xoffset);
-	y += (centery ? ((sh - mh) / 2) : (topbar ? yoffset : sh - mh - yoffset));
+	mx = embed ? 0 : sx;
+	my = embed ? 0 : sy;
+	mx += (centerx ? ((sw - mw) / 2) : xoffset);
+	my += (centery ? ((sh - mh) / 2) : (topbar ? yoffset : sh - mh - yoffset));
 	/* Sanitize values */
-	if(x < 0) x = 0; /* negative x and y make no sense */
-	if(y < 0) y = 0;
-	if(x > sw) x = sw - mw; /* x and y out-of-bounds make no sense either */
-	if(y > sh) y = sh - mh;
-	if(x + mw > sw) /* even with all those checks, the menu can still be too */
-		mw = sw - x;    /* wide or too tall. */
-	if(y + mh > sh) {
-		mh = sh - y;
+	if(mx < 0) mx = 0;
+	if(my < 0) my = 0;
+	if(mx > sw) mx = sw - mw;
+	if(my > sh) my = sh - mh;
+	if(mw > sw - mx)
+		mw = (embed ? 0 : sx) + sw - mx;
+	if(mh > sh - my) {
+		mh = (embed ? 0 : sy) + sh - my;
 		lines = (mh / bh) - 1;
 	}
 
@@ -1194,6 +1186,10 @@ setup(void) {
 
 	/* create dim window */
 	if(dimopacity > 0) {
+		dimx = wa.x + wa.border_width;
+		dimy = wa.y + wa.border_width;
+		dimw = wa.width;
+		dimh = wa.height;
 		swa.background_pixel = dimcol->BG;
 		swa.event_mask = ExposureMask | KeyPressMask | VisibilityChangeMask;
 		dim = XCreateWindow(dc->dpy, root, dimx, dimy, dimw, dimh, 0,
@@ -1215,7 +1211,7 @@ setup(void) {
 	/* create menu window */
 	swa.background_pixel = normcol->BG;
 	swa.event_mask = ExposureMask | KeyPressMask | VisibilityChangeMask | ButtonPressMask | PointerMotionMask;
-	win = XCreateWindow(dc->dpy, parentwin, x, y, mw, mh, 0,
+	win = XCreateWindow(dc->dpy, parentwin, mx, my, mw, mh, 0,
 						CopyFromParent, CopyFromParent, CopyFromParent,
 						CWOverrideRedirect | CWBackPixel | CWEventMask, &swa);
 	XClassHint hint = { .res_name = name, .res_class = class };

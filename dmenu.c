@@ -417,8 +417,8 @@ void
 grabkeyboard(void) {
 	int i;
 
-	if(embed)
-		return;
+	/* if(embed) */
+	/* 	return; */
 
 	/* try to grab keyboard, we may have to wait for another process to ungrab */
 	for(i = 0; i < 1000; i++) {
@@ -1133,8 +1133,8 @@ setup(void) {
 	else
 #endif
 	{
-		sx = wa.x;
-		sy = wa.y;
+		sx = wa.x + (embed ? wa.border_width : 0);
+		sy = wa.y + (embed ? wa.border_width : 0);
 		sw = wa.width;
 		sh = wa.height;
 	}
@@ -1159,19 +1159,20 @@ setup(void) {
 		mh = (lines + 1) * bh;
 	}
 
-	mx = embed ? 0 : sx;
-	my = embed ? 0 : sy;
+	mx = sx;
+	my = sy;
 	mx += (centerx ? ((sw - mw) / 2) : xoffset);
 	my += (centery ? ((sh - mh) / 2) : (topbar ? yoffset : sh - mh - yoffset));
+
 	/* Sanitize values */
-	if(mx < 0) mx = 0;
-	if(my < 0) my = 0;
-	if(mx > sw) mx = sw - mw;
-	if(my > sh) my = sh - mh;
-	if(mw > sw - mx)
-		mw = (embed ? 0 : sx) + sw - mx;
+	if(mx < sx) mx = sx;
+	if(my < sy) my = sy;
+	if(mx > sx + sw) mx = sx + sw - mw;
+	if(my > sy + sh) my = sy + sh - mh;
+	if(mw > sx + sw - mx)
+		mw = sx + sw - mx;
 	if(mh > sh - my) {
-		mh = (embed ? 0 : sy) + sh - my;
+		mh = sy + sh - my;
 		lines = (mh / bh) - 1;
 	}
 
@@ -1182,8 +1183,8 @@ setup(void) {
 
 	/* create dim window */
 	if(dimopacity > 0) {
-		dimx = sx + (embed ? wa.border_width : 0);
-		dimy = sy + (embed ? wa.border_width : 0);
+		dimx = sx;
+		dimy = sy;
 		dimw = sw;
 		dimh = sh;
 		swa.background_pixel = dimcol->BG;
@@ -1209,7 +1210,7 @@ setup(void) {
 	/* create menu window */
 	swa.background_pixel = normcol->BG;
 	swa.event_mask = ExposureMask | KeyPressMask | VisibilityChangeMask | ButtonPressMask | PointerMotionMask;
-	win = XCreateWindow(dc->dpy, parentwin, mx, my, mw, mh, 0,
+	win = XCreateWindow(dc->dpy, root, mx, my, mw, mh, 0,
 						CopyFromParent, CopyFromParent, CopyFromParent,
 						CWOverrideRedirect | CWBackPixel | CWEventMask, &swa);
 	XClassHint hint = { .res_name = name, .res_class = class };
@@ -1229,15 +1230,15 @@ setup(void) {
 					XNClientWindow, win, XNFocusWindow, win, NULL);
 
 	XMapRaised(dc->dpy, win);
-	if(embed) {
-		XSelectInput(dc->dpy, parentwin, FocusChangeMask);
-		if (XQueryTree(dc->dpy, parentwin, &dw, &w, &dws, &du) && dws) {
-			for (i = 0; i < du && dws[i] != win; ++i)
-				XSelectInput(dc->dpy, dws[i], FocusChangeMask);
-			XFree(dws);
-		}
-		grabfocus();
-	}
+	/* if(embed) { */
+	/* 	XSelectInput(dc->dpy, parentwin, FocusChangeMask); */
+	/* 	if (XQueryTree(dc->dpy, parentwin, &dw, &w, &dws, &du) && dws) { */
+	/* 		for (i = 0; i < du && dws[i] != win; ++i) */
+	/* 			XSelectInput(dc->dpy, dws[i], FocusChangeMask); */
+	/* 		XFree(dws); */
+	/* 	} */
+	/* 	grabfocus(); */
+	/* } */
 	resizedc(dc, mw, mh);
 	drawmenu();
 }

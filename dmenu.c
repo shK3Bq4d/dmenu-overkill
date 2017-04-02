@@ -398,27 +398,8 @@ drawmenu(void) {
 }
 
 void
-grabfocus(void)
-{
-	Window focuswin;
-	int i, revertwin;
-
-	for(i = 0; i < 100; ++i) {
-		XGetInputFocus(dc->dpy, &focuswin, &revertwin);
-		if(focuswin == win)
-			return;
-		XSetInputFocus(dc->dpy, win, RevertToParent, CurrentTime);
-		usleep(1000);
-	}
-	eprintf("cannot grab focus\n");
-}
-
-void
 grabkeyboard(void) {
 	int i;
-
-	/* if(embed) */
-	/* 	return; */
 
 	/* try to grab keyboard, we may have to wait for another process to ungrab */
 	for(i = 0; i < 1000; i++) {
@@ -1048,11 +1029,6 @@ run(void) {
 			if(ev.xexpose.count == 0)
 				mapdc(dc, win, mw, mh);
 			break;
-		case FocusIn:
-			/* regrab focus from parent window */
-			if(ev.xfocus.window != win)
-				grabfocus();
-			break;
 		case KeyPress:
 			keypress(&ev.xkey);
 			break;
@@ -1230,15 +1206,6 @@ setup(void) {
 					XNClientWindow, win, XNFocusWindow, win, NULL);
 
 	XMapRaised(dc->dpy, win);
-	/* if(embed) { */
-	/* 	XSelectInput(dc->dpy, parentwin, FocusChangeMask); */
-	/* 	if (XQueryTree(dc->dpy, parentwin, &dw, &w, &dws, &du) && dws) { */
-	/* 		for (i = 0; i < du && dws[i] != win; ++i) */
-	/* 			XSelectInput(dc->dpy, dws[i], FocusChangeMask); */
-	/* 		XFree(dws); */
-	/* 	} */
-	/* 	grabfocus(); */
-	/* } */
 	resizedc(dc, mw, mh);
 	drawmenu();
 }

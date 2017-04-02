@@ -85,6 +85,7 @@ static Bool noinput = False;
 static Bool vertfull = False;
 static Bool centerx = False;
 static Bool centery = False;
+static Bool incremental = False;
 static int ret = 0;
 static Bool quiet = False;
 static DC *dc;
@@ -111,7 +112,7 @@ main(int argc, char *argv[]) {
 	for(i = 1; i < argc; i++)
 		/* these options take no arguments */
 		if(!strcmp(argv[i], "-v")) { /* prints version information */
-			puts("dmenu-"VERSION", © 2006-2012 dmenu engineers, see LICENSE for details");
+			puts("dmenu-"VERSION", © 2006-2017 dmenu engineers, see LICENSE for details");
 			exit(EXIT_SUCCESS);
 		}
 		else if(!strcmp(argv[i], "-b"))   /* appears at the bottom of the screen */
@@ -145,6 +146,8 @@ main(int argc, char *argv[]) {
 			centerx = True;
 		else if(!strcmp(argv[i], "-cy"))
 			centery = True;
+		else if(!strcmp(argv[i], "-inc"))
+			incremental = True;
 		else if(i+1 == argc)
 			usage();
 		/* these options take one argument */
@@ -565,6 +568,7 @@ keypress(XKeyEvent *ev) {
 		}
 		ret = EXIT_SUCCESS;
 		running = False;
+		return;
 	case XK_Right:
 		if(text[cursor] != '\0') {
 			cursor = nextrune(+1);
@@ -620,6 +624,10 @@ keypress(XKeyEvent *ev) {
 			}
 		} 
 		break;
+	}
+	if(incremental) {
+		puts(text);
+		fflush(stdout);
 	}
 	drawmenu();
 }
@@ -1183,7 +1191,7 @@ setup(void) {
 void
 usage(void) {
 	fputs("usage:\n"
-		"dmenu [-b] [-q] [-f] [-r] [-i] [-z] [-t] [-mask] [-noinput] [-vf]\n"
+		"dmenu [-b] [-q] [-f] [-r] [-i] [-z] [-t] [-inc] [-mask] [-noinput] [-vf]\n"
 		"      [-s screen] [-name name] [-class class] [-c] [-cx] [-cy]\n"
 		"      [ -o opacity] [-so scrolloff] [-fn font] [-mh menuheight]\n"
 		"      [-dim opacity] [-dc color] [-l lines] [-p prompt]\n"

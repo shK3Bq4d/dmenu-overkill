@@ -6,11 +6,11 @@ I've forked dmenu-ee and fixed a yoffset bug, as well as options:
 - `-mh`, for setting menu height
 - `-vf`, to implement [vertfull](http://tools.suckless.org/dmenu/patches/vertfull) patch programmatically
 - `-so` for scrolloff capability (see [issue #3](https://github.com/toolpunk/dmenu-ee/issues/3) in dmenu-ee)
+- `-cx`, `-cy`, `-c` options for centering
 
 ROADMAP:
 
 - add `-dimx`, `-dimy`, `-dimw`, `-dimh` options to only dim a part of the screen
-- add `-centerx`, `-centery` options
 - consider changing drawing to be able to set "screen rectangle" (basically dmenu would see a screen smaller than the real screen, for drawing menus on individual windows, etc.)
 
 Original README is below.

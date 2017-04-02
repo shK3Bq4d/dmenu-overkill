@@ -113,91 +113,100 @@ main(int argc, char *argv[]) {
 
 	for (i = 1; i < argc; i++)
 		/* these options take no arguments */
-		if (!strcmp(argv[i], "-v")) { /* prints version information */
+		if (!strcmp(argv[i], "-v")||!strcmp(argv[i], "--version")) {
 			puts("dmenu-"VERSION", © 2006-2017 dmenu engineers, see LICENSE for details");
 			exit(EXIT_SUCCESS);
 		}
-		else if (!strcmp(argv[i], "-b"))   /* appears at the bottom of the screen */
+		/* upstream dmenu arguments  */
+		else if (!strcmp(argv[i], "-b")||!strcmp(argv[i], "--bottom"))
 			topbar = False;
-		else if (!strcmp(argv[i], "-q"))
-			quiet = True;
-		else if (!strcmp(argv[i], "-f"))   /* grabs keyboard before reading stdin */
+		else if (!strcmp(argv[i], "-f")||!strcmp(argv[i], "--fast"))
 			fast = True;
-		else if (!strcmp(argv[i], "-z"))   /* enable fuzzy matching */
-			match = matchfuzzy;
-		else if (!strcmp(argv[i], "-r"))
-			filter = True;
-		else if (!strcmp(argv[i], "-i")) { /* case-insensitive item matching */
+		else if (!strcmp(argv[i], "-i")||!strcmp(argv[i], "--ignorecase")) {
 			fstrncmp = strncasecmp;
 			fstrstr = cistrstr;
 			fstrchr = strchri;
 		}
-		else if (!strcmp(argv[i], "-mask")) /* password-style input */
+		/* input and typing options */
+		else if (!strcmp(argv[i], "-q")||!strcmp(argv[i], "--quiet"))
+			quiet = True;
+		else if (!strcmp(argv[i], "-r")||!strcmp(argv[i], "--filter"))
+			filter = True;
+		else if (!strcmp(argv[i], "-mask")||!strcmp(argv[i], "--mask"))
 			maskin = True;
-		else if (!strcmp(argv[i], "-noinput"))
+		else if (!strcmp(argv[i], "-noinput")||!strcmp(argv[i], "--noinput"))
 			noinput = True;
-		else if (!strcmp(argv[i], "-t"))
+		else if (!strcmp(argv[i], "-inc")||!strcmp(argv[i], "--incremental"))
+			incremental = True;
+		else if (!strcmp(argv[i], "-n")||!strcmp(argv[i], "--instant"))
+			instant = True;
+		/* matching styles */
+		else if (!strcmp(argv[i], "-z")||!strcmp(argv[i], "--fuzzy"))
+			match = matchfuzzy;
+		else if (!strcmp(argv[i], "-t")||!strcmp(argv[i], "--token"))
 			match = matchtok;
-		else if (!strcmp(argv[i], "-vf")) /* vertfull patch */
+		/* ui options */
+		else if (!strcmp(argv[i], "-vf")||!strcmp(argv[i], "--vertfull"))
 			vertfull = True;
-		else if (!strcmp(argv[i], "-c")) { /* center the menu */
+		else if (!strcmp(argv[i], "-c")||!strcmp(argv[i], "--center")) {
 			centerx = True;
 			centery = True;
 		}
-		else if (!strcmp(argv[i], "-cx"))
+		else if (!strcmp(argv[i], "-cx")||!strcmp(argv[i], "--centerx"))
 			centerx = True;
-		else if (!strcmp(argv[i], "-cy"))
+		else if (!strcmp(argv[i], "-cy")||!strcmp(argv[i], "--centery"))
 			centery = True;
-		else if (!strcmp(argv[i], "-inc"))
-			incremental = True;
-		else if (!strcmp(argv[i], "-n"))
-			instant = True;
 		else if (i+1 == argc)
 			usage();
 		/* these options take one argument */
-		else if (!strcmp(argv[i], "-x"))
-			xoffset = atoi(argv[++i]);
-		else if (!strcmp(argv[i], "-y"))
-			yoffset = atoi(argv[++i]);
-		else if (!strcmp(argv[i], "-w")) /* width of menu */
-			width = atoi(argv[++i]);
-		else if (!strcmp(argv[i], "-l"))   /* number of lines in vertical list */
+		/* upstream dmenu args (minus -w, -m because of the way I do "embedding") */
+		else if (!strcmp(argv[i], "-l")||!strcmp(argv[i], "--lines"))
 			lines = atoi(argv[++i]);
-		else if (!strcmp(argv[i], "-h"))   /* minimum height of single line */
-			line_height = atoi(argv[++i]);
-		else if (!strcmp(argv[i], "-mh")) /* height of the menu in total */
-			menu_height = atoi(argv[++i]);
-		else if (!strcmp(argv[i], "-name")) /* dmenu window name */
-			name = argv[++i];
-		else if (!strcmp(argv[i], "-class")) /* dmenu window class */
-			class = argv[++i];
-		else if (!strcmp(argv[i], "-o"))  /* opacity */
-			opacity = atof(argv[++i]);
-		else if (!strcmp(argv[i], "-dim"))	/* dim opacity */
-			dimopacity = atof(argv[++i]);	
-		else if (!strcmp(argv[i], "-dc")) /* dim color */
-			dimcolor = argv[++i];
-		else if (!strcmp(argv[i], "-p"))   /* adds prompt to left of input field */
+		else if (!strcmp(argv[i], "-p")||!strcmp(argv[i], "--prompt"))
 			prompt = argv[++i];
-		else if (!strcmp(argv[i], "-so")) /* set the scrolloff value */
-			scrolloff = atoi(argv[++i]);
-		else if (!strcmp(argv[i], "-fn"))  /* font or font set */
+		else if (!strcmp(argv[i], "-fn")||!strcmp(argv[i], "--font"))
 			font = argv[++i];
-		else if (!strcmp(argv[i], "-nb"))  /* normal background color */
+		else if (!strcmp(argv[i], "-nb")||!strcmp(argv[i], "--normbg"))
 			normbgcolor = argv[++i];
-		else if (!strcmp(argv[i], "-nf"))  /* normal foreground color */
+		else if (!strcmp(argv[i], "-nf")||!strcmp(argv[i], "--normfg"))
 			normfgcolor = argv[++i];
-		else if (!strcmp(argv[i], "-sb"))  /* selected background color */
+		else if (!strcmp(argv[i], "-sb")||!strcmp(argv[i], "--selbg"))
 			selbgcolor = argv[++i];
-		else if (!strcmp(argv[i], "-sf"))  /* selected foreground color */
+		else if (!strcmp(argv[i], "-sf")||!strcmp(argv[i], "--selfg"))
 			selfgcolor = argv[++i];
-		else if (!strcmp(argv[i], "-m")) {
+		/* geometry options */
+		else if (!strcmp(argv[i], "-x")||!strcmp(argv[i], "--xoffset"))
+			xoffset = atoi(argv[++i]);
+		else if (!strcmp(argv[i], "-y")||!strcmp(argv[i], "--yoffset"))
+			yoffset = atoi(argv[++i]);
+		else if (!strcmp(argv[i], "-w")||!strcmp(argv[i], "--width"))
+			width = atoi(argv[++i]);
+		else if (!strcmp(argv[i], "-h")||!strcmp(argv[i], "--height"))
+			menu_height = atoi(argv[++i]);
+		else if (!strcmp(argv[i], "-lh")||!strcmp(argv[i], "--lineheight"))
+			line_height = atoi(argv[++i]);
+		else if (!strcmp(argv[i], "-m")||!strcmp(argv[i], "--embed")) {
 			if (!strncmp(argv[++i], "0x", 2))
 				embed = argv[i];
 			#ifdef XINERAMA
 			else snum = atoi(argv[i]);
 			#endif
 		}
+		/* window attribute options */
+		else if (!strcmp(argv[i], "-name")||!strcmp(argv[i], "--name"))
+			name = argv[++i];
+		else if (!strcmp(argv[i], "-class")||!strcmp(argv[i], "--class"))
+			class = argv[++i];
+		/* opacity and dimming */
+		else if (!strcmp(argv[i], "-o")||!strcmp(argv[i], "--opacity"))
+			opacity = atof(argv[++i]);
+		else if (!strcmp(argv[i], "-dim")||!strcmp(argv[i], "--dim"))	/* dim opacity */
+			dimopacity = atof(argv[++i]);	
+		else if (!strcmp(argv[i], "-dc")||!strcmp(argv[i], "--dimcolor"))
+			dimcolor = argv[++i];
+		/* etc. */
+		else if (!strcmp(argv[i], "-so")||!strcmp(argv[i], "--scrolloff"))
+			scrolloff = atoi(argv[++i]);
 		else
 			usage();
 

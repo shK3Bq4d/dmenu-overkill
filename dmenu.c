@@ -167,10 +167,6 @@ main(int argc, char *argv[]) {
 			line_height = atoi(argv[++i]);
 		else if(!strcmp(argv[i], "-mh")) /* height of the menu in total */
 			menu_height = atoi(argv[++i]);
-		#ifdef XINERAMA
-		else if(!strcmp(argv[i], "-s"))   /* screen number for dmenu to appear in */
-			snum = atoi(argv[++i]);
-		#endif
 		else if (!strcmp(argv[i], "-name")) /* dmenu window name */
 			name = argv[++i];
 		else if (!strcmp(argv[i], "-class")) /* dmenu window class */
@@ -195,12 +191,12 @@ main(int argc, char *argv[]) {
 			selbgcolor = argv[++i];
 		else if(!strcmp(argv[i], "-sf"))  /* selected foreground color */
 			selfgcolor = argv[++i];
-		else if(!strcmp(argv[i], "-e")) /* embedding window id */
-			embed = argv[++i];
 		else if(!strcmp(argv[i], "-m")) {
 			if (!strncmp(argv[++i], "0x", 2))
 				embed = argv[i];
+			#ifdef XINERAMA
 			else snum = atoi(argv[i]);
+			#endif
 		}
 		else
 			usage();
@@ -1246,9 +1242,9 @@ void
 usage(void) {
 	fputs("usage:\n"
 		"dmenu [-b] [-q] [-f] [-r] [-i] [-z] [-t] [-inc] [-mask] [-noinput] [-vf]\n"
-		"      [-s screen] [-name name] [-class class] [-c] [-cx] [-cy] [-n]\n"
+		"      [-name name] [-class class] [-c] [-cx] [-cy] [-n] [-m screen|winid]\n"
 		"      [ -o opacity] [-so scrolloff] [-fn font] [-mh menuheight]\n"
-		"      [-dim opacity] [-dc color] [-l lines] [-p prompt] [-e winid]\n"
+		"      [-dim opacity] [-dc color] [-l lines] [-p prompt]\n"
 		"      [-x xoffset] [-y yoffset] [-h height] [-w width]\n"
 		"      [-nb color] [-nf color] [-sb color] [-sf color] [-v]\n",
 		stderr);

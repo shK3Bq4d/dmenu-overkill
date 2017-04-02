@@ -12,8 +12,6 @@ dmenu \- dynamic menu
 .RB [ \-mask ]
 .RB [ \-noinput ]
 .RB [ \-vf ]
-.RB [ \-s
-.IR screen ]
 .RB [ \-name
 .IR name ]
 .RB [ \-class
@@ -32,6 +30,8 @@ dmenu \- dynamic menu
 .IR menuheight ]
 .RB [ \-w
 .IR width ]
+.RB [ \-m
+.IR embed ]
 .RB [ \-p
 .IR prompt ]
 .RB [ \-so
@@ -114,9 +114,6 @@ dmenu instantly selects if only one match.
 .B \-inc
 dmenu outputs text each time a key is pressed.
 .TP
-.BI \-s " screen"
-dmenu apears on the specified screen number. Number given corespondes to screen number in X configuration.
-.TP
 .BI \-name " name"
 defines window name for dmenu. Defaults to "dmenu".
 .TP
@@ -159,6 +156,9 @@ defines the offset from the top border of the screen.
 .BI \-w " width"
 defines the desired menu window width. If it's 0, dmenu will be as wide as the longest string passed.
 .TP
+.BI \-m " embed"
+sets the screen or window to embed dmenu on. If the argument starts with 0x, it's interpreted as a window; otherwise a screen.
+.TP
 .BI \-nb " color"
 defines the normal background color.
 .IR #RGB ,
@@ -173,9 +173,6 @@ defines the selected background color.
 .TP
 .BI \-sf " color"
 defines the selected foreground color.
-.TP
-.BI \-e " windowid"
-embeds dmenu in specified window.
 .TP
 .B \-v
 prints version information to stdout, then exits.

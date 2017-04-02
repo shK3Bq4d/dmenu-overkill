@@ -51,7 +51,7 @@ static void usage(void);
 static void read_resourses(void);
 static char text[BUFSIZ] = "";
 static char originaltext[BUFSIZ] = "";
-static int bh, mw, mh;
+static int bh, mw, mh, sw, sh;
 static int inputw, promptw;
 static size_t cursor = 0;
 static const char *font = NULL;
@@ -83,6 +83,8 @@ static Bool filter = False;
 static Bool maskin = False;
 static Bool noinput = False;
 static Bool vertfull = False;
+static Bool centerx = False;
+static Bool centery = False;
 static int ret = 0;
 static Bool quiet = False;
 static DC *dc;
@@ -135,6 +137,14 @@ main(int argc, char *argv[]) {
 			match = matchtok;
 		else if(!strcmp(argv[i], "-vf")) /* vertfull patch */
 			vertfull = True;
+		else if(!strcmp(argv[i], "-c")) { /* center the menu */
+			centerx = True;
+			centery = True;
+		}
+		else if(!strcmp(argv[i], "-cx"))
+			centerx = True;
+		else if(!strcmp(argv[i], "-cy"))
+			centery = True;
 		else if(i+1 == argc)
 			usage();
 		/* these options take one argument */
@@ -1021,15 +1031,7 @@ setup(void) {
 	clip = XInternAtom(dc->dpy, "CLIPBOARD",   False);
 	utf8 = XInternAtom(dc->dpy, "UTF8_STRING", False);
 
-	/* calculate menu geometry */
-	lines = MAX(lines, 0);
-	menu_height = MAX(menu_height, 0);
-	bh = (line_height > dc->font.height + 2) ? line_height : dc->font.height + 2;
-	if(menu_height > 0) {
-		lines = (menu_height / bh) - 1;
-		mh = menu_height;
-	} else
-		mh = (lines + 1) * bh;
+	/* SCREEN STUFF */
 #ifdef XINERAMA
 	if((info = XineramaQueryScreens(dc->dpy, &n))) {
 		int a, j, di, i = 0, area = 0;
@@ -1039,13 +1041,14 @@ setup(void) {
 
 		if(snum > -1 && snum < n) {
 			x = info[snum].x_org;
-			y = info[snum].y_org + (topbar ? yoffset : info[i].height - mh - yoffset);
-			mw = info[snum].width;
+			y = info[snum].y_org;
+			sw = info[snum].width;
+			sh = info[snum].height;
 
-			dimx = info[snum].x_org;
-			dimy = info[snum].y_org;
-			dimw = info[snum].width;
-			dimh = info[snum].height;
+			dimx = x;
+			dimy = y;
+			dimw = sw;
+			dimh = sh;
 		}
 		else {
 			XGetInputFocus(dc->dpy, &w, &di);
@@ -1070,13 +1073,14 @@ setup(void) {
 						break;
 
 			x = info[i].x_org;
-			y = info[i].y_org + (topbar ? yoffset : info[i].height - mh - yoffset);
-			mw = info[i].width;
+			y = info[i].y_org;
+			sw = info[i].width;
+			sh = info[i].height;
 
-			dimx = info[i].x_org;
-			dimy = info[i].y_org;
-			dimw = info[i].width;
-			dimh = info[i].height;
+			dimx = x;
+			dimy = y;
+			dimw = sw;
+			dimh = sh;
 		}
 		XFree(info);
 	}
@@ -1084,22 +1088,45 @@ setup(void) {
 #endif
 	{
 		x = 0;
-		y = topbar ? yoffset : DisplayHeight(dc->dpy, screen) - mh - yoffset;
-		mw = DisplayWidth(dc->dpy, screen);
+		y = 0;
+		sw = DisplayWidth(dc->dpy, screen);
+		sh = DisplayHeight(dc->dpy, screen);
 
-		dimx = 0;
-		dimy = 0;
+		dimx = x;
+		dimy = y;
 		dimw = WidthOfScreen(defScreen); 
 		dimh = HeightOfScreen(defScreen);
 	}
 
-	x += xoffset;
-
-	if(width != 0) {
-		mw = (width > 0) ? width : mw;
-		inputw = MIN(inputw, mw/3);
-	} else {
+	/* calculate geometry */
+	if(width == 0) {
 		mw = inputw;
+	} else {
+		mw = (width > 0) ? width : sw;
+		inputw = MIN(inputw, mw/3);
+	}
+
+	lines = MAX(lines, 0);
+	menu_height = MAX(menu_height, 0);
+	bh = MAX(line_height, dc->font.height + 2);
+	if(menu_height) {
+		lines = (menu_height / bh) - 1;
+		if(lines == 0)
+			bh = menu_height;
+		mh = menu_height;
+	} else {
+		mh = (lines + 1) * bh;
+	}
+
+	x += centerx ? ((sw - mw) / 2) : xoffset;
+	y += centery ? ((sh - mh) / 2) : (topbar ? yoffset : sh - mh - yoffset);
+	if(x < 0) x = 0;
+	if(y < 0) y = 0;
+	if(x + mw > sw)
+		mw = sw - x;
+	if(y + mh > sh) {
+		mh = sh - y;
+		lines = (mh / bh) - 1;
 	}
 
 	promptw = (prompt && *prompt) ? textw(dc, prompt) : 0;

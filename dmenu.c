@@ -1252,7 +1252,7 @@ usage(void) {
 		"dmenu [-b] [-q] [-f] [-r] [-i] [-z] [-t] [-inc] [-mask] [-noinput] [-vf]\n"
 		"      [-s screen] [-name name] [-class class] [-c] [-cx] [-cy] [-n]\n"
 		"      [ -o opacity] [-so scrolloff] [-fn font] [-mh menuheight]\n"
-		"      [-dim opacity] [-dc color] [-l lines] [-p prompt]\n"
+		"      [-dim opacity] [-dc color] [-l lines] [-p prompt] [-e winid]\n"
 		"      [-x xoffset] [-y yoffset] [-h height] [-w width]\n"
 		"      [-nb color] [-nf color] [-sb color] [-sf color] [-v]\n",
 		stderr);

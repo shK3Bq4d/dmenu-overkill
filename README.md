@@ -7,7 +7,9 @@ I've forked dmenu-ee and fixed a yoffset bug, as well as options:
 - `-vf`, to implement [vertfull](http://tools.suckless.org/dmenu/patches/vertfull) patch programmatically
 - `-so` for scrolloff capability (see [issue #3](https://github.com/toolpunk/dmenu-ee/issues/3) in dmenu-ee)
 - `-cx`, `-cy`, `-c` options for centering
-- `-e` to allow embedding dmenu to a window (all the above options work relative to parent window)
+- `-m` to allow embedding dmenu to a window or setting the monitor\* (all the above options work relative to parent window)
+
+\* that means that `-s` is gone.
 
 Original README is below.
 

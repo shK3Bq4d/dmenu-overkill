@@ -86,6 +86,7 @@ static Bool vertfull = False;
 static Bool centerx = False;
 static Bool centery = False;
 static Bool incremental = False;
+static Bool instant = False;
 static int ret = 0;
 static Bool quiet = False;
 static DC *dc;
@@ -148,6 +149,8 @@ main(int argc, char *argv[]) {
 			centery = True;
 		else if(!strcmp(argv[i], "-inc"))
 			incremental = True;
+		else if(!strcmp(argv[i], "-n"))
+			instant = True;
 		else if(i+1 == argc)
 			usage();
 		/* these options take one argument */
@@ -877,6 +880,11 @@ matchstr(void) {
 		matchend = substrend;
 	}
 	curr = sel = matches;
+	if(instant && matches && matches==matchend && !lsubstr) {
+		puts(matches->text);
+		cleanup();
+		exit(0);
+	}
 	calcoffsets();
 }
 
@@ -904,6 +912,11 @@ matchtok(void) {
 	}
 	free(tokv);
 	curr = prev = next = sel = matches;
+	if(instant && matches && matches==matchend) {
+		puts(matches->text);
+		cleanup();
+		exit(0);
+	}
 	calcoffsets();
 }
 
@@ -923,6 +936,11 @@ matchfuzzy(void) {
 	}
 
 	curr = sel = matches;
+	if(instant && matches && matches==matchend) {
+		puts(matches->text);
+		cleanup();
+		exit(0);
+	}
 	calcoffsets();
 }
 
@@ -1192,7 +1210,7 @@ void
 usage(void) {
 	fputs("usage:\n"
 		"dmenu [-b] [-q] [-f] [-r] [-i] [-z] [-t] [-inc] [-mask] [-noinput] [-vf]\n"
-		"      [-s screen] [-name name] [-class class] [-c] [-cx] [-cy]\n"
+		"      [-s screen] [-name name] [-class class] [-c] [-cx] [-cy] [-n]\n"
 		"      [ -o opacity] [-so scrolloff] [-fn font] [-mh menuheight]\n"
 		"      [-dim opacity] [-dc color] [-l lines] [-p prompt]\n"
 		"      [-x xoffset] [-y yoffset] [-h height] [-w width]\n"

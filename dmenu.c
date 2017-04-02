@@ -1182,10 +1182,10 @@ setup(void) {
 
 	/* create dim window */
 	if(dimopacity > 0) {
-		dimx = wa.x + wa.border_width;
-		dimy = wa.y + wa.border_width;
-		dimw = wa.width;
-		dimh = wa.height;
+		dimx = sx + (embed ? wa.border_width : 0);
+		dimy = sy + (embed ? wa.border_width : 0);
+		dimw = sw;
+		dimh = sh;
 		swa.background_pixel = dimcol->BG;
 		swa.event_mask = ExposureMask | KeyPressMask | VisibilityChangeMask;
 		dim = XCreateWindow(dc->dpy, root, dimx, dimy, dimw, dimh, 0,
@@ -1193,8 +1193,10 @@ setup(void) {
 						DefaultVisual(dc->dpy, screen),
 						CWOverrideRedirect | CWBackPixel | CWEventMask, &swa);
 		XClassHint dimhint = { .res_name = dimname, .res_class = class };
-	XSetClassHint(dc->dpy, dim, &dimhint);
+		XSetClassHint(dc->dpy, dim, &dimhint);
 
+		if(dimopacity > 1 && dimopacity <= 100)
+			dimopacity /= 100;
 		dimopacity = MIN(MAX(dimopacity, 0), 1);
 	unsigned int dimopacity_set = (unsigned int)(dimopacity * OPAQUE);
 	XChangeProperty(dc->dpy, dim, XInternAtom(dc->dpy, OPACITY, False),
@@ -1213,6 +1215,8 @@ setup(void) {
 	XClassHint hint = { .res_name = name, .res_class = class };
 	XSetClassHint(dc->dpy, win, &hint);
 
+	if(opacity > 1 && opacity <= 100)
+		opacity /= 100;
 	opacity = MIN(MAX(opacity, 0), 1);
 	unsigned int opacity_set = (unsigned int)(opacity * OPAQUE);
 	XChangeProperty(dc->dpy, win, XInternAtom(dc->dpy, OPACITY, False),

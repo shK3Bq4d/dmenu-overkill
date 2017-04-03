@@ -3,7 +3,7 @@ DDMENU -- fork of dmenu-ee, fork of dmenu
 
 I've forked [dmenu-ee][] and fixed a yoffset bug, as well as implemented a completely customizable geometry, added switches for [vertfull][] and [scrolloff][] patches, and made dmenu embeddable while still allowing for customizable opacity and dimming (stock dmenu can embed with `-w`, but does not have opacity).
 
-I've also added long options (--option) for every option.
+I've also added long options (`--option`) for every option.
 
 dmenu-ee
 --------

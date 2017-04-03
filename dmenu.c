@@ -84,6 +84,7 @@ static Bool filter = False;
 static Bool maskin = False;
 static Bool noinput = False;
 static Bool vertfull = False;
+static Bool horzfull = False;
 static Bool centerx = False;
 static Bool centery = False;
 static Bool incremental = False;
@@ -146,8 +147,10 @@ main(int argc, char *argv[]) {
 		else if (!strcmp(argv[i], "-t")||!strcmp(argv[i], "--token"))
 			match = matchtok;
 		/* ui options */
-		else if (!strcmp(argv[i], "-F")||!strcmp(argv[i], "--vertfull"))
+		else if (!strcmp(argv[i], "-V")||!strcmp(argv[i], "--vertfull"))
 			vertfull = True;
+		else if (!strcmp(argv[i], "-H")||!strcmp(argv[i], "--horzfull"))
+			vertfull = horzfull = True;
 		else if (!strcmp(argv[i], "-c")||!strcmp(argv[i], "--center"))
 			centerx = centery = True;
 		else if (!strcmp(argv[i], "--centerx"))
@@ -362,13 +365,16 @@ drawmenu(void) {
 		drawtext(dc, prompt, selcol);
 		dc->x = dc->w;
 	}
-
+	if (horzfull)
+		drawrect(dc, dc->x, dc->y, mw, dc->h, True, selcol->BG);
 
 	/* draw input field */
-	dc->w = (lines > 0 || !matches) ? mw - dc->x : inputw;
-	drawtext(dc, maskin ? createmaskinput(maskinput, length) : text, normcol);
-	if ((curpos = textnw(dc, maskin ? maskinput : text, length) + dc->font.height/2) < dc->w)
-		drawrect(dc, curpos, (dc->h - dc->font.height)/2 + 1, 1, dc->font.height -1, True, normcol->FG);
+	if (!horzfull) {
+		dc->w = (lines > 0 || !matches) ? mw - dc->x : inputw;
+		drawtext(dc, maskin ? createmaskinput(maskinput, length) : text, normcol);
+		if ((curpos = textnw(dc, maskin ? maskinput : text, length) + dc->font.height/2) < dc->w)
+			drawrect(dc, curpos, (dc->h - dc->font.height)/2 + 1, 1, dc->font.height -1, True, normcol->FG);
+	}
 
 	if (!quiet || strlen(text) > 0) {	
 		if (lines > 0) {
@@ -1142,6 +1148,10 @@ setup(void) {
 		mh = (lines + 1) * bh;
 	}
 
+	promptw = (prompt && *prompt) ? textw(dc, prompt) : 0;
+	if (horzfull)
+		mw = promptw = MAX(promptw, mw);
+
 	mx = sx;
 	my = sy;
 	mx += (centerx ? ((sw - mw) / 2) : xoffset);
@@ -1159,7 +1169,6 @@ setup(void) {
 		lines = (mh / bh) - 1;
 	}
 
-	promptw = (prompt && *prompt) ? textw(dc, prompt) : 0;
 	match();
 
 	swa.override_redirect = True;
@@ -1221,7 +1230,7 @@ void
 usage(void) {
 	fputs("usage:\n"
 		"dmenu [-b] [-f] [-i] [-q] [-r] [-n] [-z|-t] [-M] [-Q] [-N]\n"
-		"      [-F] [-c|--centerx|--centery]\n"
+		"      [-V|-H] [-c|--centerx|--centery]\n"
 		"      [-l LINES] [-p PROMPT] [-fn FONT] [-nb COLOR] [-nf COLOR]\n"
 		"      [-sb COLOR] [-sf COLOR] [-x OFFSET] [-y OFFSET] [-w WIDTH]\n"
 		"      [-h HEIGHT] [-lh LINEHEIGHT] [-m (WINDOW|SCREEN)]\n"

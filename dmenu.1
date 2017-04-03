@@ -14,7 +14,8 @@ dmenu \- dynamic menu
 .RB [ \-M | \-\-mask ]
 .RB [ \-Q | \-\-noinput ]
 .RB [ \-N | \-\-incremental ]
-.RB [ \-F | \-\-vertfull ]
+.RB [ \-V | \-\-vertfull ]
+.RB [ \-H | \-\-horzfull ]
 .RB [ \-c | \-\-center ]
 .RB [ \-\-centerx ]
 .RB [ \-\-centery ]
@@ -115,8 +116,13 @@ dmenu ignores input from stdin (equivalent to: echo | dmenu).
 .B \-N, \-\-incremental
 dmenu outputs the text entered so far each time a key is pressed.
 .TP
-.B \-F, \-\-vertfull
+.B \-V, \-\-vertfull
 dmenu choices appear directly under the prompt, instead of to the right.
+.TP
+.B \-H, \-\-horzfull
+dmenu's prompt takes up the entire width of the inputw. Implies -V.
+Useful in mouse-driven selection menus where the user should be
+disincentivized to type.
 .TP
 .B \-c, \-\-center
 dmenu centers itself on the screen. There are also \-\-centerx

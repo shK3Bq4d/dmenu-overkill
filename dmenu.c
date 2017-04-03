@@ -132,29 +132,27 @@ main(int argc, char *argv[]) {
 			quiet = True;
 		else if (!strcmp(argv[i], "-r")||!strcmp(argv[i], "--filter"))
 			filter = True;
-		else if (!strcmp(argv[i], "-mask")||!strcmp(argv[i], "--mask"))
-			maskin = True;
-		else if (!strcmp(argv[i], "-noinput")||!strcmp(argv[i], "--noinput"))
-			noinput = True;
-		else if (!strcmp(argv[i], "-inc")||!strcmp(argv[i], "--incremental"))
-			incremental = True;
 		else if (!strcmp(argv[i], "-n")||!strcmp(argv[i], "--instant"))
 			instant = True;
+		else if (!strcmp(argv[i], "-M")||!strcmp(argv[i], "--mask"))
+			maskin = True;
+		else if (!strcmp(argv[i], "-Q")||!strcmp(argv[i], "--noinput"))
+			noinput = True;
+		else if (!strcmp(argv[i], "-N")||!strcmp(argv[i], "--incremental"))
+			incremental = True;
 		/* matching styles */
 		else if (!strcmp(argv[i], "-z")||!strcmp(argv[i], "--fuzzy"))
 			match = matchfuzzy;
 		else if (!strcmp(argv[i], "-t")||!strcmp(argv[i], "--token"))
 			match = matchtok;
 		/* ui options */
-		else if (!strcmp(argv[i], "-vf")||!strcmp(argv[i], "--vertfull"))
+		else if (!strcmp(argv[i], "-F")||!strcmp(argv[i], "--vertfull"))
 			vertfull = True;
-		else if (!strcmp(argv[i], "-c")||!strcmp(argv[i], "--center")) {
+		else if (!strcmp(argv[i], "-c")||!strcmp(argv[i], "--center"))
+			centerx = centery = True;
+		else if (!strcmp(argv[i], "--centerx"))
 			centerx = True;
-			centery = True;
-		}
-		else if (!strcmp(argv[i], "-cx")||!strcmp(argv[i], "--centerx"))
-			centerx = True;
-		else if (!strcmp(argv[i], "-cy")||!strcmp(argv[i], "--centery"))
+		else if (!strcmp(argv[i], "--centery"))
 			centery = True;
 		else if (i+1 == argc)
 			usage();
@@ -193,14 +191,14 @@ main(int argc, char *argv[]) {
 			#endif
 		}
 		/* window attribute options */
-		else if (!strcmp(argv[i], "-name")||!strcmp(argv[i], "--name"))
+		else if (!strcmp(argv[i], "--name"))
 			name = argv[++i];
-		else if (!strcmp(argv[i], "-class")||!strcmp(argv[i], "--class"))
+		else if (!strcmp(argv[i], "--class"))
 			class = argv[++i];
 		/* opacity and dimming */
 		else if (!strcmp(argv[i], "-o")||!strcmp(argv[i], "--opacity"))
 			opacity = atof(argv[++i]);
-		else if (!strcmp(argv[i], "-dim")||!strcmp(argv[i], "--dim"))	/* dim opacity */
+		else if (!strcmp(argv[i], "-d")||!strcmp(argv[i], "--dim"))	/* dim opacity */
 			dimopacity = atof(argv[++i]);	
 		else if (!strcmp(argv[i], "-dc")||!strcmp(argv[i], "--dimcolor"))
 			dimcolor = argv[++i];
@@ -1222,12 +1220,13 @@ setup(void) {
 void
 usage(void) {
 	fputs("usage:\n"
-		"dmenu [-b] [-q] [-f] [-r] [-i] [-z] [-t] [-inc] [-mask] [-noinput] [-vf]\n"
-		"      [-name name] [-class class] [-c] [-cx] [-cy] [-n] [-m screen|winid]\n"
-		"      [ -o opacity] [-so scrolloff] [-fn font] [-mh menuheight]\n"
-		"      [-dim opacity] [-dc color] [-l lines] [-p prompt]\n"
-		"      [-x xoffset] [-y yoffset] [-h height] [-w width]\n"
-		"      [-nb color] [-nf color] [-sb color] [-sf color] [-v]\n",
+		"dmenu [-b] [-f] [-i] [-q] [-r] [-n] [-z|-t] [-M] [-Q] [-N]\n"
+		"      [-F] [-c|--centerx|--centery]\n"
+		"      [-l LINES] [-p PROMPT] [-fn FONT] [-nb COLOR] [-nf COLOR]\n"
+		"      [-sb COLOR] [-sf COLOR] [-x OFFSET] [-y OFFSET] [-w WIDTH]\n"
+		"      [-h HEIGHT] [-lh LINEHEIGHT] [-m (WINDOW|SCREEN)]\n"
+		"      [--name NAME] [--class CLASS] [-o OPACITY] [-d OPACITY]\n"
+		"      [-dc COLOR] [-so LINES] [-v]\n",
 		stderr);
 	exit(EXIT_FAILURE);
 }

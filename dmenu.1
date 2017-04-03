@@ -3,50 +3,60 @@
 dmenu \- dynamic menu
 .SH SYNOPSIS
 .B dmenu
-.RB [ \-b ]
-.RB [ \-f ]
-.RB [ \-r ]
-.RB [ \-i ]
-.RB [ \-z ]
-.RB [ \-t ]
-.RB [ \-mask ]
-.RB [ \-noinput ]
-.RB [ \-vf ]
-.RB [ \-name
-.IR name ]
-.RB [ \-class
-.IR class ]
-.RB [ \-o
-.IR opacity ]
-.RB [ \-dim
-.IR opacity ]
-.RB [ \-dc 
-.IR color ]
-.RB [ \-l
+.RB [ \-b | \-\-bottom ]
+.RB [ \-f | \-\-fast ]
+.RB [ \-i | \-\-ignorecase ]
+.RB [ \-q | \-\-quiet ]
+.RB [ \-r | \-\-filter ]
+.RB [ \-n | \-\-instant ]
+.RB [ \-z | \-\-fuzzy ]
+.RB [ \-t | \-\-token ]
+.RB [ \-M | \-\-mask ]
+.RB [ \-Q | \-\-noinput ]
+.RB [ \-N | \-\-incremental ]
+.RB [ \-F | \-\-vertfull ]
+.RB [ \-c | \-\-center ]
+.RB [ \-\-centerx ]
+.RB [ \-\-centery ]
+.RB [ ( \-l | \-\-lines )
 .IR lines ]
-.RB [ \-h
-.IR height ]
-.RB [ \-mh
-.IR menuheight ]
-.RB [ \-w
-.IR width ]
-.RB [ \-m
-.IR embed ]
-.RB [ \-p
+.RB [ ( \-p | \-\-prompt )
 .IR prompt ]
-.RB [ \-so
-.IR scrolloff ]
-.RB [ \-fn
+.RB [ ( \-fn | \-\-font )
 .IR font ]
-.RB [ \-nb
+.RB [ ( \-nb | \-\-normbg )
 .IR color ]
-.RB [ \-nf
+.RB [ ( \-nf | \-\-normfg )
 .IR color ]
-.RB [ \-sb
+.RB [ ( \-sb | \-\-selbg )
 .IR color ]
-.RB [ \-sf
+.RB [ ( \-sf | \-\-selfg )
 .IR color ]
-.RB [ \-v ]
+.RB [ ( \-x | \-\-xoffset )
+.IR pixels ]
+.RB [ ( \-y | \-\-yoffset )
+.IR pixels ]
+.RB [ ( \-w | \-\-width )
+.IR pixels ]
+.RB [ ( \-h | \-\-height )
+.IR pixels ]
+.RB [ ( \-lh | \-\-lineheight )
+.IR pixels ]
+.RB [ ( \-m | \-\-embed )
+.IR (window | screen) ]
+.RB [ \-\-name
+.IR name ]
+.RB [ \-\-class
+.IR class ]
+.RB [ ( \-o | \-\-opacity )
+.IR opacity ]
+.RB [ ( \-d | \-\-dim )
+.IR opacity ]
+.RB [ ( \-dc | \-\-dimcolor )
+.IR color ]
+.RB [ ( \-so | \-\-scrolloff )
+.IR lines ]
+.RB [ \-v | \-\-version ]
 .P
 .BR dmenu_run " ..."
 .SH DESCRIPTION
@@ -62,119 +72,129 @@ is a script used by
 which lists programs in the user's $PATH and runs the result in their $SHELL.
 .SH OPTIONS
 .TP
-.B \-b
+.B \-b, \-\-bottom
 dmenu appears at the bottom of the screen.
 .TP
-.B \-q
-dmenu will not show any items if the search string is empty.
-.TP
-.B \-f
+.B \-f, \-\-fast
 dmenu grabs the keyboard before reading stdin.  This is faster, but will lock up
 X until stdin reaches end\-of\-file.
-.TP
-.B \-r 
-activates filter mode. All matching items currently shown in the list will be
-selected, starting with the item that is highlighted and wrapping around to the
-beginning of the list. 
 .TP 
-.B \-i
+.B \-i, \-\-ignorecase
 dmenu matches menu items case insensitively.
 .TP
-.B \-z
-dmenu uses fuzzy matching. It matches items that have all characters entered, in sequence they are
-entered, but there may be any number of characters between matched characters.
-For example it takes "txt" makes it to "*t*x*t" glob pattern and checks if it
-matches.
+.B \-q, \-\-quiet
+dmenu will not show any items if the search string is empty.
 .TP
-.B \-t
-dmenu uses space\-separated tokens to match menu items. Using this overrides -z option.
+.B \-r, \-\-filter
+activates filter mode. Upon selection, all matching items
+currently shown in the list will be selected, starting with
+the item that is highlighted and wrapping around to the
+beginning of the list. 
 .TP
-.B \-mask
+.B \-n, \-\-instant
+activates instant mode. If there is only one matching selection,
+dmenu will immediately print it and exit.
+.TP
+.B \-z, \-\-fuzzy
+dmenu uses fuzzy matching. It matches items that have all
+characters entered, in sequence they are entered, but there
+may be any number of characters between matched characters.
+For example it takes "txt" makes it to "*t*x*t" glob pattern
+and checks if it matches.
+.TP
+.B \-t, \-\-token
+dmenu uses space\-separated tokens to match menu items.
+Using this overrides -z option.
+.TP
+.B \-M, \-\-mask
 dmenu masks input with asterisk characters (*).
 .TP
-.B \-noinput
+.B \-Q, \-\-noinput
 dmenu ignores input from stdin (equivalent to: echo | dmenu).
 .TP
-.B \-vf
-dmenu choices appear directly under the prompt, instead of tabbed right.
+.B \-N, \-\-incremental
+dmenu outputs the text entered so far each time a key is pressed.
 .TP
-.B \-cx
-dmenu centers itself on the screen's x-axis.
+.B \-F, \-\-vertfull
+dmenu choices appear directly under the prompt, instead of to the right.
 .TP
-.B \-cy
-dmenu centers itself on the screen's y-axis.
+.B \-c, \-\-center
+dmenu centers itself on the screen. There are also \-\-centerx
+and \-\-centery options if centering is only desired along one axis.
 .TP
-.B \-c
-dmenu centers itself on the screen on both axes -- it's a combo of
-the previous two options.
-.TP
-.B \-n
-dmenu instantly selects if only one match.
-.TP
-.B \-inc
-dmenu outputs text each time a key is pressed.
-.TP
-.BI \-name " name"
-defines window name for dmenu. Defaults to "dmenu".
-.TP
-.BI \-class " class"
-defines window class for dmenu. Defaults to "Dmenu".
-.TP
-.BI \-o " opacity"
-defines window opacity for dmenu. Defaults to 1.0.
-.TP
-.BI \-dim " opacity"
-enables screen dimming when dmenu appers. Takes dim opacity as argument.
-.TP 
-.BI \-dc " color"
-defines color of screen dimming. Active only when -dim in effect. Defaults to black (#000000)
-.TP
-.BI \-l " lines"
+.BI \-l, " \-\-lines" " LINES"
 dmenu lists items vertically, with the given number of lines.
 .TP
-.BI \-h " height"
-defines the height of the bar in pixels.
-.TP
-.BI \-mh " menuheight"
-defines the total height of the menu. If set, it can use the lineheight defined with -h, but it resets the number of lines, rendering -l useless.
-.TP
-.BI \-p " prompt"
+.BI \-p, " \-\-prompt" " PROMPT"
 defines the prompt to be displayed to the left of the input field.
 .TP
-.BI \-so " scrolloff"
-defines how far each click of the scroll wheel will scroll. Defaults to 4 because I like it that way. Set to 0 for dmenu default behavior (page down/up results).
+.BI \-fn, " \-\-font" " FONT"
+defines the font or font set used.
+eg. "fixed" or "Monospace-12:normal" (an xft font)
 .TP
-.BI \-fn " font"
-defines the font or font set used. eg. "fixed" or "Monospace-12:normal" (an xft font)
-.TP
-.BI \-x " xoffset"
-defines the offset from the left border of the screen.
-.TP
-.BI \-y " yoffset"
-defines the offset from the top border of the screen.
-.TP
-.BI \-w " width"
-defines the desired menu window width. If it's 0, dmenu will be as wide as the longest string passed.
-.TP
-.BI \-m " embed"
-sets the screen or window to embed dmenu on. If the argument starts with 0x, it's interpreted as a window; otherwise a screen.
-.TP
-.BI \-nb " color"
+.BI \-nb, " \-\-normbg" " COLOR"
 defines the normal background color.
 .IR #RGB ,
 .IR #RRGGBB ,
 and X color names are supported.
 .TP
-.BI \-nf " color"
+.BI \-nf, " \-\-normfg" " COLOR"
 defines the normal foreground color.
 .TP
-.BI \-sb " color"
+.BI \-sb, " \-\-selbg" " COLOR"
 defines the selected background color.
 .TP
-.BI \-sf " color"
+.BI \-sf, " \-\-selfg" " COLOR"
 defines the selected foreground color.
 .TP
-.B \-v
+.BI \-x, " \-\-xoffset" " PIXELS"
+defines the offset from the left border of the screen.
+.TP
+.BI \-y, " \-\-yoffset" " PIXELS"
+defines the offset from the top border of the screen.
+.TP
+.BI \-w, " \-\-width" " PIXELS"
+defines the desired menu window width. If it's 0,
+dmenu will be as wide as the longest string passed.
+.TP
+.BI \-h, " \-\-height" " PIXELS"
+defines the total height of the menu.
+If set, it can use the lineheight defined with -h,
+but it resets the number of lines, rendering \-l useless.
+.TP
+.BI \-lh, " \-\-lineheight" " PIXELS"
+defines the height of each line in pixels. Lineheight
+won't be smaller than the font size.
+.TP
+.BI \-m, " \-\-embed" " (WINDOW|SCREEN)"
+sets the screen or window to display dmenu on. 
+If the argument starts with 0x, it's interpreted as a 
+window; otherwise a screen. Offsets and centering will
+be determined from this base.
+.TP
+.BI \-\-name " NAME"
+defines window name for dmenu. Defaults to "dmenu".
+.TP
+.BI \-\-class " CLASS"
+defines window class for dmenu. Defaults to "Dmenu".
+.TP
+.BI \-o, " \-\-opacity" " OPACITY"
+defines window opacity for dmenu. Defaults to 1.0.
+If opacity is set between 1 and 100, it will be converted to a ratio
+between 0 and 1.
+.TP
+.BI \-d, " \-\-dim" " OPACITY"
+enables screen dimming when dmenu appers. Takes dim opacity as argument.
+.TP
+.BI \-dc, " \-\-dimcolor" " COLOR"
+defines color of screen dimming. Active only when -dim in effect. Defaults to black (#000000)
+.TP
+.BI \-so, " \-\-scrolloff" " LINES"
+defines how far each click of the scroll wheel will scroll.
+Defaults to 4 because I like it that way. Set to 0 for
+dmenu default behavior (page down/up results).
+.TP
+.B \-v, " \-\-version"
 prints version information to stdout, then exits.
 .SH USAGE
 dmenu is completely controlled by the keyboard.  Items are selected using the

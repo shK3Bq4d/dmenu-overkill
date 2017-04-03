@@ -1,41 +1,35 @@
 DDMENU -- fork of dmenu-ee, fork of dmenu
 =========================================
 
-I've forked dmenu-ee and fixed a yoffset bug, as well as options:
+I've forked [dmenu-ee][] and fixed a yoffset bug, as well as implemented a completely customizable geometry, added switches for [vertfull][] and [scrolloff][] patches, and made dmenu embeddable while still allowing for customizable opacity and dimming (stock dmenu can embed with `-w`, but does not have opacity).
 
-- `-mh`, for setting menu height
-- `-vf`, to implement [vertfull](http://tools.suckless.org/dmenu/patches/vertfull) patch programmatically
-- `-so` for scrolloff capability (see [issue #3](https://github.com/toolpunk/dmenu-ee/issues/3) in dmenu-ee)
-- `-cx`, `-cy`, `-c` options for centering
-- `-m` to allow embedding dmenu to a window or setting the monitor\* (all the above options work relative to parent window)
+I've also added long options (--option) for every option.
 
-\* that means that `-s` is gone.
+dmenu-ee
+--------
 
-Original README is below.
+Dmenu-ee has itself added multiple features on top of the vanilla dmenu: XFT support, a quiet and a filter option, x and y offset, fuzzy matching, focus-following, tab navigation, full mouse support, and dimming and opacity customization.
 
-dmenu-ee // dynamic menu extended edition
-==============================
-dmenu-ee is a fork of dmenu - an efficient dynamic menu for X, patched with XFT, quiet, x & y, token, fuzzy matching, follow focus, tab nav, filter and full mouse support.
-Added an option to set the screen on which dmenu appears.
-Also allows to dim screen with selected color and opacity while dmenu-ee is running.
-
+[dmenu-ee]: https://github.com/toolpunk/dmenu-ee
+[vertfull]: http://tools.suckless.org/dmenu/patches/vertfull
+[scrolloff]: https://github.com/toolpunk/dmenu-ee/issues/3
 
 Requirements
 ------------
-In order to build dmenu-ee you need the Xlib header files.
 
+In order to build ddmenu you need the Xlib header files.
 
 Installation
 ------------
-Edit config.mk to match your local setup (dmenu-ee is installed into
+Edit config.mk to match your local setup (ddmenu is installed into
 the /usr/local namespace by default).
 
-Afterwards enter the following command to build and install dmenu-ee
+Afterwards enter the following command to build and install ddmenu
 (if necessary as root):
 
     make clean install
 
-
-Running dmenu-ee
+Running ddmenu
 -------------
-See the man page for details.
+
+See the man page for details. The command is still `dmenu`.

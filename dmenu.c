@@ -1162,11 +1162,19 @@ setup(void) {
 	if (my < sy) my = sy;
 	if (mx > sx + sw) mx = sx + sw - mw;
 	if (my > sy + sh) my = sy + sh - mh;
-	if (mw > sx + sw - mx)
-		mw = sx + sw - mx;
-	if (mh > sh - my) {
-		mh = sy + sh - my;
-		lines = (mh / bh) - 1;
+	/* For rectangular menus */
+	if (xoffset && yoffset && menu_height && width >= 0) {
+		if (mx + mw > sx + sw)
+			mx -= mw;
+		if (my + mh > sy + sh)
+			my -= mh;
+	} else {
+		if (mw > sx + sw - mx)
+			mw = sx + sw - mx;
+		if (mh > sh - my) {
+			mh = sy + sh - my;
+			lines = (mh / bh) - 1;
+		}
 	}
 
 	match();

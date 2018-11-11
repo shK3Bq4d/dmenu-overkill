@@ -457,6 +457,11 @@ keypress(XKeyEvent *ev) {
 	len = XmbLookupString(xic, ev, buf, sizeof buf, &ksym, &status);
 	if (status == XBufferOverflow)
 		return;
+	// printf("keypess A %d\n", ksym);
+	if (ev->state & Mod4Mask || ksym == XK_Super_L || ksym == XK_Super_R)
+	{	ret = EXIT_FAILURE;
+		running = False;
+	}
 	if (ev->state & ControlMask)
 		switch(ksym) {
 		case XK_a: ksym = XK_Home;		break;
